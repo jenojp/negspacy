@@ -15,21 +15,30 @@ Install the library
 pip install negspacy
 ```
 
-Import library
+Import library and spaCy.
 ```python
-from negspacy.negation import NegEx
+import spacy
+from negspacy.negation import Negex
 ```
 
-Add negspacy pipeline object. Filtering on entity types is optional.
+Load spacy language model. Add negspacy pipeline object. Filtering on entity types is optional.
 ```python
-negex = Negex(nlp)
-nlp.add_pipe(negex, last=True, ent_types=["ENTITY"])
+nlp = spacy.load("en_core_web_sm")
+negex = Negex(nlp, ent_types=["PERSON","ORG"])
+nlp.add_pipe(negex, last=True)
 ```
 
 View negations
 ```python
+doc = nlp("She does not like Steve Jobs but likes Apple products.")
+
 for e in doc.ents:
 	print(e.text, e._.negex)
+```
+
+```console
+Steve Jobs True
+Apple False
 ```
 
 ## Contributing
