@@ -1,5 +1,6 @@
 from spacy.tokens import Token, Doc, Span
 from spacy.matcher import PhraseMatcher
+import logging
 
 
 class Negex:
@@ -125,7 +126,9 @@ class Negex:
                 elif match_id == self.keys[3]:
                     terminating.append((match_id, start, end))
                 else:
-                    raise ValueError("issue: ", doc[start:end])
+                    logging.warnings(
+                        f"phrase {doc[start:end].text} not in one of the expected matcher types."
+                    )
         return preceeding, following, terminating
 
     def termination_boundaries(self, doc, terminating):
