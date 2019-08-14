@@ -5,6 +5,7 @@ python:
   - "3.6"
 install:
   - pip install -r requirements.txt
+  - python -m spacy download en_core_web_sm
   - pip install scispacy
   - pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.2.0/en_core_sci_sm-0.2.0.tar.gz
 script:
