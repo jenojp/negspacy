@@ -10,7 +10,7 @@ spaCy pipeline object for negating concepts in text. Based on the NegEx algorith
 Chapman, Bridewell, Hanbury, Cooper, Buchanan*
 
 ## Installation and usage
-Install the library
+Install the library.
 ```bash
 pip install negspacy
 ```
@@ -28,7 +28,7 @@ negex = Negex(nlp, ent_types=["PERSON","ORG"])
 nlp.add_pipe(negex, last=True)
 ```
 
-View negations
+View negations.
 ```python
 doc = nlp("She does not like Steve Jobs but likes Apple products.")
 
