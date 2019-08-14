@@ -1,4 +1,4 @@
-<p align="center"><img width="60%" src="docs/icon.png" /></p>
+<p align="center"><img width="40%" src="docs/icon.png" /></p>
 
 # negspacy: negation for spaCy
 
@@ -48,4 +48,4 @@ Apple False
 * Jeno Pizarro
 
 ## License
-[license](https://github.com/jenojp/negspacy/blob/master/LICENSE.md)
+[license](https://github.com/jenojp/negspacy/blob/master/LICENSE)
