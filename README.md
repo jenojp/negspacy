@@ -49,3 +49,6 @@ Apple False
 
 ## License
 [license](https://github.com/jenojp/negspacy/blob/master/LICENSE)
+
+## API Documentation
+[Docs](https://jenojp.github.io/negspacy/)
