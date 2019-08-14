@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>negspacy package &#8212; negspacy 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">negspacy 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="negspacy-package">
+<h1>negspacy package<a class="headerlink" href="#negspacy-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-negspacy.negation">
+<span id="negspacy-negation-module"></span><h2>negspacy.negation module<a class="headerlink" href="#module-negspacy.negation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="negspacy.negation.Negex">
+<em class="property">class </em><code class="sig-prename descclassname">negspacy.negation.</code><code class="sig-name descname">Negex</code><span class="sig-paren">(</span><em class="sig-param">nlp</em>, <em class="sig-param">ent_types=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#negspacy.negation.Negex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<blockquote>
+<div><p>A spaCy pipeline component which identifies negated tokens in text.</p>
+<p>Based on: NegEx - A Simple Algorithm for Identifying Negated Findings and Diseasesin Discharge Summaries</p>
+</div></blockquote>
+<p>Chapman, Bridewell, Hanbury, Cooper, Buchanan</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nlp</strong> (<em>object</em>) – spaCy language object</p></li>
+<li><p><strong>ent_types</strong> (<em>list</em>) – list of entity types to negate</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="negspacy.negation.Negex.negex">
+<code class="sig-name descname">negex</code><span class="sig-paren">(</span><em class="sig-param">doc</em><span class="sig-paren">)</span><a class="headerlink" href="#negspacy.negation.Negex.negex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negates entities of interest</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>doc</strong> (<em>object</em>) – spaCy Doc object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="negspacy.negation.Negex.process_negations">
+<code class="sig-name descname">process_negations</code><span class="sig-paren">(</span><em class="sig-param">doc</em><span class="sig-paren">)</span><a class="headerlink" href="#negspacy.negation.Negex.process_negations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find negations in doc and clean candidate negations to remove pseudo negations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>doc</strong> (<em>object</em>) – spaCy Doc object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>preceeding</strong> (<em>list</em>) – list of tuples for preceeding negations</p></li>
+<li><p><strong>following</strong> (<em>list</em>) – list of tuples for following negations</p></li>
+<li><p><strong>terminating</strong> (<em>list</em>) – list of tuples of terminating phrases</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="negspacy.negation.Negex.termination_boundaries">
+<code class="sig-name descname">termination_boundaries</code><span class="sig-paren">(</span><em class="sig-param">doc</em>, <em class="sig-param">terminating</em><span class="sig-paren">)</span><a class="headerlink" href="#negspacy.negation.Negex.termination_boundaries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create sub sentences based on terminations found in text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>doc</strong> (<em>object</em>) – spaCy Doc object</p></li>
+<li><p><strong>terminating</strong> (<em>list</em>) – list of tuples with (match_id, start, end)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>boundaries</strong> – list of tuples with (start, end) of spans</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="negspacy-test-module">
+<h2>negspacy.test module<a class="headerlink" href="#negspacy-test-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-negspacy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-negspacy" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">negspacy package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-negspacy.negation">negspacy.negation module</a></li>
+<li><a class="reference internal" href="#negspacy-test-module">negspacy.test module</a></li>
+<li><a class="reference internal" href="#module-negspacy">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/negspacy.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">negspacy 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Jeno Pizarro.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>
