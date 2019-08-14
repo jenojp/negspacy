@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'negspacy',
-    version = '0.1.0',
+    version = 'v0.1.0-alpha',
     url = 'https://github.com/jenojp/negspacy',
     author = 'Jeno Pizarro',
     author_email = 'jenopizzaro@gmail.com',
