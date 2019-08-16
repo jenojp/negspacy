@@ -2,7 +2,7 @@
 
 # negspacy: negation for spaCy
 
-[![Build Status](https://travis-ci.org/jenojp/negspacy.svg?branch=master)](https://travis-ci.org/jenojp/negspacy) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io)
+[![Build Status](https://travis-ci.org/jenojp/negspacy.svg?branch=master)](https://travis-ci.org/jenojp/negspacy) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io) [![pypi Version](https://img.shields.io/pypi/v/negspacy.svg?style=flat-square)](https://pypi.org/project/negspacy/)
 
 spaCy pipeline object for negating concepts in text. Based on the NegEx algorithm.
 
