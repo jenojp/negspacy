@@ -23,7 +23,7 @@ steps:
 
 - script: |
     python -m pip install --upgrade pip
-    pip install negspacy
+    pip install negspacy==0.1.0a0
   displayName: 'Attempt pip install on windows'
 
 #- script: |
