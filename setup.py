@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+import io
 
 setup(
     name = 'negspacy',
@@ -7,7 +8,7 @@ setup(
     author = 'Jeno Pizarro',
     author_email = 'jenopizzaro@gmail.com',
     description = 'A spaCy pipeline object for negation.',
-    long_description=open("README.md").read(),
+    long_description=io.open("README.md", encoding="utf8").read(),
     long_description_content_type="text/markdown",
     keywords = ["nlp spacy SpaCy negation"],
     classifiers=[
