@@ -16,68 +16,150 @@ class Negex:
         spaCy language object
     ent_types: list
         list of entity types to negate
+    psuedo_negations: list
+        list of phrases that cancel out a negation, if empty, defaults are used
+    preceeding_negations: list
+        negations that appear before an entity, if empty, defaults are used
+    following_negations: list
+        negations that appear after an entity, if empty, defaults are used
+    termination: list
+        phrases that "terminate" a sentence for processing purposes such as "but". If empty, defaults are used
 
 	"""
 
-    def __init__(self, nlp, ent_types=[]):
+    def __init__(
+        self,
+        nlp,
+        ent_types=list(),
+        psuedo_negations=list(),
+        preceeding_negations=list(),
+        following_negations=list(),
+        termination=list(),
+    ):
         if not Span.has_extension("negex"):
             Span.set_extension("negex", default=False, force=True)
-        psuedo_negations = [
-            "gram negative",
-            "no further",
-            "not able to be",
-            "not certain if",
-            "not certain whether",
-            "not necessarily",
-            "not rule out",
-            "not ruled out",
-            "not been ruled out",
-            "without any further",
-            "without difficulty",
-            "without further",
-        ]
-        preceeding_negations = [
-            "absence of",
-            "declined",
-            "denied",
-            "denies",
-            "denying",
-            "did not exhibit",
-            "no sign of",
-            "no signs of",
-            "not",
-            "not demonstrate",
-            "patient was not",
-            "rules out",
-            "doubt",
-            "negative for",
-            "no",
-            "no cause of",
-            "no complaints of",
-            "no evidence of",
-            "versus",
-            "without",
-            "without indication of",
-            "without sign of",
-            "without signs of",
-            "ruled out",
-        ]
-        following_negations = ["declined", "unlikely"]
-        termination = ["but", "however"]
+        if not psuedo_negations:
+            psuedo_negations = [
+                "gram negative",
+                "no further",
+                "not able to be",
+                "not certain if",
+                "not certain whether",
+                "not necessarily",
+                "not rule out",
+                "not ruled out",
+                "not been ruled out",
+                "without any further",
+                "without difficulty",
+                "without further",
+            ]
+        if not preceeding_negations:
+            preceeding_negations = [
+                "absence of",
+                "declined",
+                "denied",
+                "denies",
+                "denying",
+                "did not exhibit",
+                "no sign of",
+                "no signs of",
+                "not",
+                "not demonstrate",
+                "patient was not",
+                "rules out",
+                "doubt",
+                "negative for",
+                "no",
+                "no cause of",
+                "no complaints of",
+                "no evidence of",
+                "versus",
+                "without",
+                "without indication of",
+                "without sign of",
+                "without signs of",
+                "ruled out",
+            ]
+        if not following_negations:
+            following_negations = [
+                "declined",
+                "unlikely",
+                "was ruled out",
+                "were ruled out",
+                "was not",
+                "were not",
+            ]
+        if not termination:
+            termination = [
+                "although",
+                "apart from",
+                "as there are",
+                "aside from",
+                "but",
+                "cause for",
+                "cause of",
+                "causes for",
+                "causes of",
+                "etiology for",
+                "etiology of",
+                "except",
+                "however",
+                "involving",
+                "nevertheless",
+                "origin for",
+                "origin of",
+                "origins for",
+                "origins of",
+                "other possibilities of",
+                "reason for",
+                "reason of",
+                "reasons for",
+                "reasons of",
+                "secondary to",
+                "source for",
+                "source of",
+                "sources for",
+                "sources of",
+                "still",
+                "though",
+                "trigger event for",
+                "which",
+                "yet",
+            ]
 
         # efficiently build spaCy matcher patterns
-        psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))
-        preceeding_patterns = list(nlp.tokenizer.pipe(preceeding_negations))
-        following_patterns = list(nlp.tokenizer.pipe(following_negations))
-        termination_patterns = list(nlp.tokenizer.pipe(termination))
+        self.psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))
+        self.preceeding_patterns = list(nlp.tokenizer.pipe(preceeding_negations))
+        self.following_patterns = list(nlp.tokenizer.pipe(following_negations))
+        self.termination_patterns = list(nlp.tokenizer.pipe(termination))
 
         self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-        self.matcher.add("Psuedo", None, *psuedo_patterns)
-        self.matcher.add("Preceeding", None, *preceeding_patterns)
-        self.matcher.add("Following", None, *following_patterns)
-        self.matcher.add("Termination", None, *termination_patterns)
+        self.matcher.add("Psuedo", None, *self.psuedo_patterns)
+        self.matcher.add("Preceeding", None, *self.preceeding_patterns)
+        self.matcher.add("Following", None, *self.following_patterns)
+        self.matcher.add("Termination", None, *self.termination_patterns)
         self.keys = [k for k in self.matcher._docs.keys()]
         self.ent_types = ent_types
+
+    def get_patterns(self):
+        """
+        returns phrase patterns used for various negation dictionaries
+        
+        Returns
+        -------
+        patterns: dict
+            pattern_type: [patterns]
+
+        """
+        patterns = {
+            "psuedo_patterns": self.psuedo_patterns,
+            "preceeding_patterns": self.preceeding_patterns,
+            "following_patterns": self.following_patterns,
+            "termination_patterns": self.termination_patterns,
+        }
+        for pattern in patterns:
+            logging.info(pattern)
+        return patterns
 
     def process_negations(self, doc):
         """
@@ -98,7 +180,12 @@ class Negex:
             list of tuples of terminating phrases
 
         """
-
+        if not doc.is_nered:
+            raise ValueError(
+                "Negations are evaluated for Named Entities found in text. "
+                "Your SpaCy pipeline does not included Named Entity resolution. "
+                "Please ensure it is enabled or choose a different language model that includes it."
+            )
         preceeding = list()
         following = list()
         terminating = list()
