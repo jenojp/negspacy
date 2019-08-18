@@ -81,9 +81,51 @@ class Negex:
                 "ruled out",
             ]
         if not following_negations:
-            following_negations = ["declined", "unlikely"]
+            following_negations = [
+                "declined",
+                "unlikely",
+                "was ruled out",
+                "were ruled out",
+                "was not",
+                "were not",
+            ]
         if not termination:
-            termination = ["but", "however"]
+            termination = [
+                "although",
+                "apart from",
+                "as there are",
+                "aside from",
+                "but",
+                "cause for",
+                "cause of",
+                "causes for",
+                "causes of",
+                "etiology for",
+                "etiology of",
+                "except",
+                "however",
+                "involving",
+                "nevertheless",
+                "origin for",
+                "origin of",
+                "origins for",
+                "origins of",
+                "other possibilities of",
+                "reason for",
+                "reason of",
+                "reasons for",
+                "reasons of",
+                "secondary to",
+                "source for",
+                "source of",
+                "sources for",
+                "sources of",
+                "still",
+                "though",
+                "trigger event for",
+                "which",
+                "yet",
+            ]
 
         # efficiently build spaCy matcher patterns
         self.psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))

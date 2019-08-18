@@ -56,6 +56,13 @@ def build_med_docs():
             ],
         )
     )
+
+    docs.append(
+        (
+            "Alcoholism was not the cause of liver disease.",
+            [("Alcoholism", True), ("liver disease", False)],
+        )
+    )
     return docs
 
 

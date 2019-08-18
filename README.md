@@ -41,12 +41,14 @@ Steve Jobs True
 Apple False
 ```
 
+Consider pairing with [scispacy](https://allenai.github.io/scispacy/) to find UMLS concepts in text and process negations.
+
 ## NegEx Patterns
 
-**psuedo_negations** - phrases that are false triggers, ambiguous negations, or double negatives
-**preceeding_negations** - negation phrases that preceed an entity
-**following_negations** - negation phrases that follow an entity
-**termination** - phrases that cut a sentence in parts, for purposes of negation detection (.e.g., "but")
+* **psuedo_negations** - phrases that are false triggers, ambiguous negations, or double negatives
+* **preceeding_negations** - negation phrases that preceed an entity
+* **following_negations** - negation phrases that follow an entity
+* **termination** - phrases that cut a sentence in parts, for purposes of negation detection (.e.g., "but")
 
 ### Use own patterns or view patterns in use
 
