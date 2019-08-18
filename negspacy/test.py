@@ -1,3 +1,4 @@
+import pytest
 import spacy
 from negation import Negex
 
@@ -78,6 +79,15 @@ def test_umls():
             assert (e.text, e._.negex) == d[1][i]
 
 
+def test_no_ner():
+    nlp = spacy.load("en_core_web_sm", disable=["ner"])
+    negex = Negex(nlp)
+    nlp.add_pipe(negex, last=True)
+    with pytest.raises(ValueError):
+        doc = nlp("this doc has not been NERed")
+
+
 if __name__ == "__main__":
     test()
     test_umls()
+    test_bad_beharor()
