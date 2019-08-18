@@ -87,7 +87,16 @@ def test_no_ner():
         doc = nlp("this doc has not been NERed")
 
 
+def test_own_terminology():
+    nlp = spacy.load("en_core_web_sm")
+    negex = Negex(nlp, termination=["whatever"])
+    nlp.add_pipe(negex, last=True)
+    doc = nlp("He does not like Steve Jobs whatever he says about Barack Obama.")
+    assert doc.ents[1]._.negex == False
+
+
 if __name__ == "__main__":
     test()
     test_umls()
     test_bad_beharor()
+    test_own_terminology()
