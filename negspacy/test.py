@@ -31,13 +31,15 @@ def build_med_docs():
     docs = list()
     docs.append(
         (
-            "Patient denies cardiovascular disease but has headaches. No history of smoking.",
+            "Patient denies cardiovascular disease but has headaches. No history of smoking. Alcoholism unlikely. Smoking not ruled out.",
             [
                 ("Patient", False),
                 ("denies", False),
                 ("cardiovascular disease", True),
                 ("headaches", False),
                 ("smoking", True),
+                ("Alcoholism", True),
+                ("Smoking", False),
             ],
         )
     )
@@ -95,8 +97,17 @@ def test_own_terminology():
     assert doc.ents[1]._.negex == False
 
 
+def test_get_patterns():
+    nlp = spacy.load("en_core_web_sm")
+    negex = Negex(nlp)
+    patterns = negex.get_patterns()
+    assert type(patterns) == dict
+    assert len(patterns) == 4
+
+
 if __name__ == "__main__":
     test()
     test_umls()
     test_bad_beharor()
     test_own_terminology()
+    test_get_patterns()

@@ -86,18 +86,38 @@ class Negex:
             termination = ["but", "however"]
 
         # efficiently build spaCy matcher patterns
-        psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))
-        preceeding_patterns = list(nlp.tokenizer.pipe(preceeding_negations))
-        following_patterns = list(nlp.tokenizer.pipe(following_negations))
-        termination_patterns = list(nlp.tokenizer.pipe(termination))
+        self.psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))
+        self.preceeding_patterns = list(nlp.tokenizer.pipe(preceeding_negations))
+        self.following_patterns = list(nlp.tokenizer.pipe(following_negations))
+        self.termination_patterns = list(nlp.tokenizer.pipe(termination))
 
         self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-        self.matcher.add("Psuedo", None, *psuedo_patterns)
-        self.matcher.add("Preceeding", None, *preceeding_patterns)
-        self.matcher.add("Following", None, *following_patterns)
-        self.matcher.add("Termination", None, *termination_patterns)
+        self.matcher.add("Psuedo", None, *self.psuedo_patterns)
+        self.matcher.add("Preceeding", None, *self.preceeding_patterns)
+        self.matcher.add("Following", None, *self.following_patterns)
+        self.matcher.add("Termination", None, *self.termination_patterns)
         self.keys = [k for k in self.matcher._docs.keys()]
         self.ent_types = ent_types
+
+    def get_patterns(self):
+        """
+        returns phrase patterns used for various negation dictionaries
+        
+        Returns
+        -------
+        patterns: dict
+            pattern_type: [patterns]
+
+        """
+        patterns = {
+            "psuedo_patterns": self.psuedo_patterns,
+            "preceeding_patterns": self.preceeding_patterns,
+            "following_patterns": self.following_patterns,
+            "termination_patterns": self.termination_patterns,
+        }
+        for pattern in patterns:
+            logging.info(pattern)
+        return patterns
 
     def process_negations(self, doc):
         """

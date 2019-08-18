@@ -2,7 +2,7 @@
 
 # negspacy: negation for spaCy
 
-[![Build Status](https://travis-ci.org/jenojp/negspacy.svg?branch=master)](https://travis-ci.org/jenojp/negspacy) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io) [![pypi Version](https://img.shields.io/pypi/v/negspacy.svg?style=flat-square)](https://pypi.org/project/negspacy/)
+[![Build Status](https://travis-ci.org/jenojp/negspacy.svg?branch=master)](https://travis-ci.org/jenojp/negspacy) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io) [![pypi Version](https://img.shields.io/pypi/v/negspacy.svg?style=flat-square)](https://pypi.org/project/negspacy/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/ambv/black)
 
 spaCy pipeline object for negating concepts in text. Based on the NegEx algorithm.
 
@@ -39,6 +39,26 @@ for e in doc.ents:
 ```console
 Steve Jobs True
 Apple False
+```
+
+## NegEx Patterns
+
+**psuedo_negations** - phrases that are false triggers, ambiguous negations, or double negatives
+**preceeding_negations** - negation phrases that preceed an entity
+**following_negations** - negation phrases that follow an entity
+**termination** - phrases that cut a sentence in parts, for purposes of negation detection (.e.g., "but")
+
+### Use own patterns or view patterns in use
+
+Use own patterns
+```python
+nlp = spacy.load("en_core_web_sm")
+negex = Negex(nlp, termination=["but", "however", "nevertheless", "except"])
+```
+
+View patterns in use
+```python
+patterns_dict = negex.get_patterns
 ```
 
 ## Contributing
