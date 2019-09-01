@@ -2,6 +2,7 @@ from spacy.tokens import Token, Doc, Span
 from spacy.matcher import PhraseMatcher
 import logging
 
+from termsets import LANGUAGES
 
 class Negex:
     """
@@ -16,6 +17,8 @@ class Negex:
         spaCy language object
     ent_types: list
         list of entity types to negate
+    language: str
+        language code, if using default termsets (e.g. "en" for english)
     psuedo_negations: list
         list of phrases that cancel out a negation, if empty, defaults are used
     preceeding_negations: list
@@ -30,102 +33,42 @@ class Negex:
     def __init__(
         self,
         nlp,
+        language = "en",
         ent_types=list(),
         psuedo_negations=list(),
         preceeding_negations=list(),
         following_negations=list(),
         termination=list(),
     ):
+        if not language in LANGUAGES:
+            raise KeyError(
+                f"{language} not found in languages termset. "
+                "Ensure this is a supported language or specify "
+                "your own termsets when initializing Negex."
+                )
+        termsets = LANGUAGES[language]
         if not Span.has_extension("negex"):
             Span.set_extension("negex", default=False, force=True)
+        
         if not psuedo_negations:
-            psuedo_negations = [
-                "gram negative",
-                "no further",
-                "not able to be",
-                "not certain if",
-                "not certain whether",
-                "not necessarily",
-                "not rule out",
-                "not ruled out",
-                "not been ruled out",
-                "without any further",
-                "without difficulty",
-                "without further",
-            ]
+            if not "psuedo_negations" in termsets:
+                raise KeyError("psuedo_negations not specified for this language.")
+            psuedo_negations = termsets['psuedo_negations']
+        
         if not preceeding_negations:
-            preceeding_negations = [
-                "absence of",
-                "declined",
-                "denied",
-                "denies",
-                "denying",
-                "did not exhibit",
-                "no sign of",
-                "no signs of",
-                "not",
-                "not demonstrate",
-                "patient was not",
-                "rules out",
-                "doubt",
-                "negative for",
-                "no",
-                "no cause of",
-                "no complaints of",
-                "no evidence of",
-                "versus",
-                "without",
-                "without indication of",
-                "without sign of",
-                "without signs of",
-                "ruled out",
-            ]
+            if not "preceeding_negations" in termsets:
+                raise KeyError("preceeding_negations not specified for this language.")
+            preceeding_negations = termsets["preceeding_negations"]   
+        
         if not following_negations:
-            following_negations = [
-                "declined",
-                "unlikely",
-                "was ruled out",
-                "were ruled out",
-                "was not",
-                "were not",
-            ]
+            if not "following_negations" in termsets:
+                raise KeyError("following_negations not specified for this language.")
+            following_negations = termsets["following_negations" ]
+        
         if not termination:
-            termination = [
-                "although",
-                "apart from",
-                "as there are",
-                "aside from",
-                "but",
-                "cause for",
-                "cause of",
-                "causes for",
-                "causes of",
-                "etiology for",
-                "etiology of",
-                "except",
-                "however",
-                "involving",
-                "nevertheless",
-                "origin for",
-                "origin of",
-                "origins for",
-                "origins of",
-                "other possibilities of",
-                "reason for",
-                "reason of",
-                "reasons for",
-                "reasons of",
-                "secondary to",
-                "source for",
-                "source of",
-                "sources for",
-                "sources of",
-                "still",
-                "though",
-                "trigger event for",
-                "which",
-                "yet",
-            ]
+            if not "termination" in termsets:
+                raise KeyError("termination not specified for this language.")
+            termination = termsets["termination"]
 
         # efficiently build spaCy matcher patterns
         self.psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))
