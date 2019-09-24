@@ -123,12 +123,17 @@ class Negex:
             list of tuples of terminating phrases
 
         """
-        if not doc.is_nered:
-            raise ValueError(
-                "Negations are evaluated for Named Entities found in text. "
-                "Your SpaCy pipeline does not included Named Entity resolution. "
-                "Please ensure it is enabled or choose a different language model that includes it."
-            )
+        ###
+        # does not work properly in spacy 2.1.8. Will incorporate after 2.2. 
+        # Relying on user to use NER in meantime
+        # see https://github.com/jenojp/negspacy/issues/7
+        ###
+        # if not doc.is_nered:
+        #     raise ValueError(
+        #         "Negations are evaluated for Named Entities found in text. "
+        #         "Your SpaCy pipeline does not included Named Entity resolution. "
+        #         "Please ensure it is enabled or choose a different language model that includes it."
+        #     )
         preceding = list()
         following = list()
         terminating = list()
