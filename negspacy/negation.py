@@ -21,7 +21,7 @@ class Negex:
         language code, if using default termsets (e.g. "en" for english)
     psuedo_negations: list
         list of phrases that cancel out a negation, if empty, defaults are used
-    preceeding_negations: list
+    preceding_negations: list
         negations that appear before an entity, if empty, defaults are used
     following_negations: list
         negations that appear after an entity, if empty, defaults are used
@@ -36,7 +36,7 @@ class Negex:
         language = "en",
         ent_types=list(),
         psuedo_negations=list(),
-        preceeding_negations=list(),
+        preceding_negations=list(),
         following_negations=list(),
         termination=list(),
     ):
@@ -55,10 +55,10 @@ class Negex:
                 raise KeyError("psuedo_negations not specified for this language.")
             psuedo_negations = termsets['psuedo_negations']
         
-        if not preceeding_negations:
-            if not "preceeding_negations" in termsets:
-                raise KeyError("preceeding_negations not specified for this language.")
-            preceeding_negations = termsets["preceeding_negations"]   
+        if not preceding_negations:
+            if not "preceding_negations" in termsets:
+                raise KeyError("preceding_negations not specified for this language.")
+            preceding_negations = termsets["preceding_negations"]   
         
         if not following_negations:
             if not "following_negations" in termsets:
@@ -72,13 +72,13 @@ class Negex:
 
         # efficiently build spaCy matcher patterns
         self.psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))
-        self.preceeding_patterns = list(nlp.tokenizer.pipe(preceeding_negations))
+        self.preceding_patterns = list(nlp.tokenizer.pipe(preceding_negations))
         self.following_patterns = list(nlp.tokenizer.pipe(following_negations))
         self.termination_patterns = list(nlp.tokenizer.pipe(termination))
 
         self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
         self.matcher.add("Psuedo", None, *self.psuedo_patterns)
-        self.matcher.add("Preceeding", None, *self.preceeding_patterns)
+        self.matcher.add("Preceding", None, *self.preceding_patterns)
         self.matcher.add("Following", None, *self.following_patterns)
         self.matcher.add("Termination", None, *self.termination_patterns)
         self.keys = [k for k in self.matcher._docs.keys()]
@@ -96,7 +96,7 @@ class Negex:
         """
         patterns = {
             "psuedo_patterns": self.psuedo_patterns,
-            "preceeding_patterns": self.preceeding_patterns,
+            "preceding_patterns": self.preceding_patterns,
             "following_patterns": self.following_patterns,
             "termination_patterns": self.termination_patterns,
         }
@@ -115,8 +115,8 @@ class Negex:
 
         Returns
         -------
-        preceeding: list
-            list of tuples for preceeding negations
+        preceding: list
+            list of tuples for preceding negations
         following: list
             list of tuples for following negations
         terminating: list
@@ -129,7 +129,7 @@ class Negex:
                 "Your SpaCy pipeline does not included Named Entity resolution. "
                 "Please ensure it is enabled or choose a different language model that includes it."
             )
-        preceeding = list()
+        preceding = list()
         following = list()
         terminating = list()
 
@@ -150,7 +150,7 @@ class Negex:
                     continue
             if not psuedo_flag:
                 if match_id == self.keys[1]:
-                    preceeding.append((match_id, start, end))
+                    preceding.append((match_id, start, end))
                 elif match_id == self.keys[2]:
                     following.append((match_id, start, end))
                 elif match_id == self.keys[3]:
@@ -159,7 +159,7 @@ class Negex:
                     logging.warnings(
                         f"phrase {doc[start:end].text} not in one of the expected matcher types."
                     )
-        return preceeding, following, terminating
+        return preceding, following, terminating
 
     def termination_boundaries(self, doc, terminating):
         """
@@ -200,17 +200,17 @@ class Negex:
             spaCy Doc object
 
         """
-        preceeding, following, terminating = self.process_negations(doc)
+        preceding, following, terminating = self.process_negations(doc)
         boundaries = self.termination_boundaries(doc, terminating)
         for b in boundaries:
-            sub_preceeding = [i for i in preceeding if b[0] <= i[1] < b[1]]
+            sub_preceding = [i for i in preceding if b[0] <= i[1] < b[1]]
             sub_following = [i for i in following if b[0] <= i[1] < b[1]]
 
             for e in doc[b[0] : b[1]].ents:
                 if self.ent_types:
                     if e.label_ not in self.ent_types:
                         continue
-                if any(pre < e.start for pre in [i[1] for i in sub_preceeding]):
+                if any(pre < e.start for pre in [i[1] for i in sub_preceding]):
                     e._.negex = True
                 if any(fol > e.end for fol in [i[2] for i in sub_following]):
                     e._.negex = True

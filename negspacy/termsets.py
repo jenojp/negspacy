@@ -20,7 +20,7 @@ en['psuedo_negations'] = [
                 "without difficulty",
                 "without further",
             ]
-en['preceeding_negations'] = [
+en['preceding_negations'] = [
                 "absence of",
                 "declined",
                 "denied",

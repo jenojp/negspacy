@@ -37,8 +37,8 @@ def build_med_docs():
                 ("denies", False),
                 ("cardiovascular disease", True),
                 ("headaches", False),
-                ("smoking", True),
                 ("Alcoholism", True),
+                ("unlikely", False),
                 ("Smoking", False),
             ],
         )
