@@ -4,6 +4,7 @@ import logging
 
 from termsets import LANGUAGES
 
+
 class Negex:
     """
 	A spaCy pipeline component which identifies negated tokens in text.
@@ -33,7 +34,7 @@ class Negex:
     def __init__(
         self,
         nlp,
-        language = "en",
+        language="en",
         ent_types=list(),
         psuedo_negations=list(),
         preceding_negations=list(),
@@ -45,26 +46,26 @@ class Negex:
                 f"{language} not found in languages termset. "
                 "Ensure this is a supported language or specify "
                 "your own termsets when initializing Negex."
-                )
+            )
         termsets = LANGUAGES[language]
         if not Span.has_extension("negex"):
             Span.set_extension("negex", default=False, force=True)
-        
+
         if not psuedo_negations:
             if not "psuedo_negations" in termsets:
                 raise KeyError("psuedo_negations not specified for this language.")
-            psuedo_negations = termsets['psuedo_negations']
-        
+            psuedo_negations = termsets["psuedo_negations"]
+
         if not preceding_negations:
             if not "preceding_negations" in termsets:
                 raise KeyError("preceding_negations not specified for this language.")
-            preceding_negations = termsets["preceding_negations"]   
-        
+            preceding_negations = termsets["preceding_negations"]
+
         if not following_negations:
             if not "following_negations" in termsets:
                 raise KeyError("following_negations not specified for this language.")
-            following_negations = termsets["following_negations" ]
-        
+            following_negations = termsets["following_negations"]
+
         if not termination:
             if not "termination" in termsets:
                 raise KeyError("termination not specified for this language.")
@@ -124,7 +125,7 @@ class Negex:
 
         """
         ###
-        # does not work properly in spacy 2.1.8. Will incorporate after 2.2. 
+        # does not work properly in spacy 2.1.8. Will incorporate after 2.2.
         # Relying on user to use NER in meantime
         # see https://github.com/jenojp/negspacy/issues/7
         ###

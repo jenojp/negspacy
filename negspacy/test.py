@@ -88,6 +88,7 @@ def test_umls():
         for i, e in enumerate(doc.ents):
             assert (e.text, e._.negex) == d[1][i]
 
+
 # blocked by spacy 2.1.8 issue. Adding back after spacy 2.2.
 # def test_no_ner():
 #     nlp = spacy.load("en_core_web_sm", disable=["ner"])
@@ -112,12 +113,13 @@ def test_get_patterns():
     assert type(patterns) == dict
     assert len(patterns) == 4
 
+
 def issue7():
     nlp = spacy.load("en_core_web_sm")
     negex = Negex(nlp)
     nlp.add_pipe(negex, last=True)
     ruler = EntityRuler(nlp)
-    patterns = [{"label":"SOFTWARE", "pattern":"spacy"}]
+    patterns = [{"label": "SOFTWARE", "pattern": "spacy"}]
     doc = nlp("fgfgdghgdh")
 
 
