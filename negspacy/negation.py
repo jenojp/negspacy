@@ -2,7 +2,7 @@ from spacy.tokens import Token, Doc, Span
 from spacy.matcher import PhraseMatcher
 import logging
 
-from termsets import LANGUAGES
+from negspacy.termsets import LANGUAGES
 
 
 class Negex:
