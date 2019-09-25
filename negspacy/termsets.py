@@ -19,6 +19,7 @@ en["psuedo_negations"] = [
     "without any further",
     "without difficulty",
     "without further",
+    "might not",
 ]
 en["preceding_negations"] = [
     "absence of",
@@ -45,6 +46,25 @@ en["preceding_negations"] = [
     "without sign of",
     "without signs of",
     "ruled out",
+    "doesn't",
+    "doesnt",
+    "don't",
+    "dont",
+    "didn't",
+    "didnt",
+    "wasn't",
+    "wasnt",
+    "weren't",
+    "werent",
+    "isn't",
+    "isnt",
+    "aren't",
+    "arent",
+    "cannot",
+    "can't",
+    "cant",
+    "couldn't",
+    "couldnt"
 ]
 en["following_negations"] = [
     "declined",
@@ -53,6 +73,10 @@ en["following_negations"] = [
     "were ruled out",
     "was not",
     "were not",
+    "wasn't",
+    'wasnt',
+    "weren't",
+    "werent",
 ]
 en["termination"] = [
     "although",
