@@ -40,6 +40,7 @@ class Negex:
         preceding_negations=list(),
         following_negations=list(),
         termination=list(),
+        chunk_prefix=list(),
     ):
         if not language in LANGUAGES:
             raise KeyError(
@@ -84,6 +85,8 @@ class Negex:
         self.matcher.add("Termination", None, *self.termination_patterns)
         self.keys = [k for k in self.matcher._docs.keys()]
         self.ent_types = ent_types
+
+        self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
 
     def get_patterns(self):
         """
@@ -218,8 +221,16 @@ class Negex:
                         continue
                 if any(pre < e.start for pre in [i[1] for i in sub_preceding]):
                     e._.negex = True
+                    continue
                 if any(fol > e.end for fol in [i[2] for i in sub_following]):
                     e._.negex = True
+                    continue
+                if self.chunk_prefix:
+                    if any(
+                        c.text.lower() == doc[e.start].text.lower()
+                        for c in self.chunk_prefix
+                    ):
+                        e._.negex = True
         return doc
 
     def __call__(self, doc):

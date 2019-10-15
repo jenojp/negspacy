@@ -48,7 +48,7 @@ def build_med_docs():
         (
             "No history of headaches, prbc, smoking, acid reflux, or GERD.",
             [
-                ("No history", False),
+                ("No history", True),
                 ("headaches", True),
                 ("prbc", True),
                 ("smoking", True),
@@ -62,6 +62,13 @@ def build_med_docs():
         (
             "Alcoholism was not the cause of liver disease.",
             [("Alcoholism", True), ("liver disease", False)],
+        )
+    )
+
+    docs.append(
+        (
+            "There was no headache for this patient.",
+            [("no headache", True), ("patient", True)],
         )
     )
     return docs
@@ -80,7 +87,7 @@ def test():
 
 def test_umls():
     nlp = spacy.load("en_core_sci_sm")
-    negex = Negex(nlp, ent_types=["ENTITY"])
+    negex = Negex(nlp, ent_types=["ENTITY"], chunk_prefix=["no"])
     nlp.add_pipe(negex, last=True)
     docs = build_med_docs()
     for d in docs:

@@ -42,7 +42,7 @@
 <span id="negspacy-negation-module"></span><h2>negspacy.negation module<a class="headerlink" href="#module-negspacy.negation" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="negspacy.negation.Negex">
-<em class="property">class </em><code class="sig-prename descclassname">negspacy.negation.</code><code class="sig-name descname">Negex</code><span class="sig-paren">(</span><em class="sig-param">nlp</em>, <em class="sig-param">ent_types=[]</em>, <em class="sig-param">psuedo_negations=[]</em>, <em class="sig-param">preceeding_negations=[]</em>, <em class="sig-param">following_negations=[]</em>, <em class="sig-param">termination=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#negspacy.negation.Negex" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">negspacy.negation.</code><code class="sig-name descname">Negex</code><span class="sig-paren">(</span><em class="sig-param">nlp</em>, <em class="sig-param">language='en'</em>, <em class="sig-param">ent_types=[]</em>, <em class="sig-param">psuedo_negations=[]</em>, <em class="sig-param">preceding_negations=[]</em>, <em class="sig-param">following_negations=[]</em>, <em class="sig-param">termination=[]</em>, <em class="sig-param">chunk_prefix=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#negspacy.negation.Negex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <blockquote>
 <div><p>A spaCy pipeline component which identifies negated tokens in text.</p>
@@ -54,8 +54,9 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nlp</strong> (<em>object</em>) – spaCy language object</p></li>
 <li><p><strong>ent_types</strong> (<em>list</em>) – list of entity types to negate</p></li>
+<li><p><strong>language</strong> (<em>str</em>) – language code, if using default termsets (e.g. “en” for english)</p></li>
 <li><p><strong>psuedo_negations</strong> (<em>list</em>) – list of phrases that cancel out a negation, if empty, defaults are used</p></li>
-<li><p><strong>preceeding_negations</strong> (<em>list</em>) – negations that appear before an entity, if empty, defaults are used</p></li>
+<li><p><strong>preceding_negations</strong> (<em>list</em>) – negations that appear before an entity, if empty, defaults are used</p></li>
 <li><p><strong>following_negations</strong> (<em>list</em>) – negations that appear after an entity, if empty, defaults are used</p></li>
 <li><p><strong>termination</strong> (<em>list</em>) – phrases that “terminate” a sentence for processing purposes such as “but”. If empty, defaults are used</p></li>
 </ul>
@@ -96,7 +97,7 @@
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>preceeding</strong> (<em>list</em>) – list of tuples for preceeding negations</p></li>
+<li><p><strong>preceding</strong> (<em>list</em>) – list of tuples for preceding negations</p></li>
 <li><p><strong>following</strong> (<em>list</em>) – list of tuples for following negations</p></li>
 <li><p><strong>terminating</strong> (<em>list</em>) – list of tuples of terminating phrases</p></li>
 </ul>

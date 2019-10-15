@@ -50,6 +50,8 @@ Consider pairing with [scispacy](https://allenai.github.io/scispacy/) to find UM
 * **following_negations** - negation phrases that follow an entity
 * **termination** - phrases that cut a sentence in parts, for purposes of negation detection (.e.g., "but")
 
+## Additional Functionality
+
 ### Use own patterns or view patterns in use
 
 Use own patterns
@@ -62,6 +64,31 @@ View patterns in use
 ```python
 patterns_dict = negex.get_patterns
 ```
+
+### Negations in noun chunks
+
+Depending on the Named Entity Recognition model you are using, you may have negations "chunked together" with nouns. For example when using scispacy:
+```python
+nlp = spacy.load("en_core_sci_sm")
+doc = nlp("There is no headache.")
+for e in doc.ents:
+    print(e.text)
+
+# no headache
+```
+This would cause the Negex algorithm to miss the preceding negation. To account for this, you can add a ```chunk_prefix```:
+
+```python
+nlp = spacy.load("en_core_sci_sm")
+negex = Negex(nlp, chunk_prefix = ["no"])
+nlp.add_pipe(negex)
+doc = nlp("There is no headache.")
+for e in doc.ents:
+    print(e.text, e._.negex)
+
+# no headache True
+```
+
 
 ## Contributing
 [contributing](https://github.com/jenojp/negspacy/blob/master/CONTRIBUTING.md)
