@@ -57,5 +57,5 @@ steps:
 
 - script: |
     cd ..
-    python setup.py sdist
+    python -m setup.py sdist
   displayName: 'build sdist'
