@@ -34,12 +34,12 @@ def build_med_docs():
         (
             "Patient denies cardiovascular disease but has headaches. No history of smoking. Alcoholism unlikely. Smoking not ruled out.",
             [
-                ("Patient", False),
-                ("denies", False),
+                ("Patient denies", False),
                 ("cardiovascular disease", True),
                 ("headaches", False),
+                ("No history", True),
+                ("smoking", True),
                 ("Alcoholism", True),
-                ("unlikely", False),
                 ("Smoking", False),
             ],
         )
@@ -61,7 +61,7 @@ def build_med_docs():
     docs.append(
         (
             "Alcoholism was not the cause of liver disease.",
-            [("Alcoholism", True), ("liver disease", False)],
+            [("Alcoholism", True), ("cause", False), ("liver disease", False)],
         )
     )
 
@@ -82,6 +82,7 @@ def test():
     for d in docs:
         doc = nlp(d[0])
         for i, e in enumerate(doc.ents):
+            print(e.text, e._.negex)
             assert (e.text, e._.negex) == d[1][i]
 
 
@@ -93,6 +94,7 @@ def test_umls():
     for d in docs:
         doc = nlp(d[0])
         for i, e in enumerate(doc.ents):
+            print(e.text, e._.negex)
             assert (e.text, e._.negex) == d[1][i]
 
 

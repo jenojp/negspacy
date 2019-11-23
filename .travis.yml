@@ -1,6 +1,7 @@
 dist: xenial
 language: python
 python:
+  - "3.8"
   - "3.7"
   - "3.6"
 cache: pip
@@ -8,7 +9,7 @@ install:
   - pip install -r requirements.txt
   - python -m spacy download en_core_web_sm
   - pip install scispacy
-  - pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.2.3/en_core_sci_sm-0.2.3.tar.gz
+  - pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.2.4/en_core_sci_sm-0.2.4.tar.gz
 script:
   - cd negspacy
   - python -m pytest test.py

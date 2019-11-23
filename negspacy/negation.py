@@ -83,7 +83,7 @@ class Negex:
         self.matcher.add("Preceding", None, *self.preceding_patterns)
         self.matcher.add("Following", None, *self.following_patterns)
         self.matcher.add("Termination", None, *self.termination_patterns)
-        self.keys = [k for k in self.matcher._docs.keys()]
+        self.nlp = nlp
         self.ent_types = ent_types
 
         self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
@@ -146,11 +146,11 @@ class Negex:
         psuedo = [
             (match_id, start, end)
             for match_id, start, end in matches
-            if match_id == self.keys[0]
+            if self.nlp.vocab.strings[match_id] == "Psuedo"
         ]
 
         for match_id, start, end in matches:
-            if match_id == self.keys[0]:
+            if self.nlp.vocab.strings[match_id] == "Psuedo":
                 continue
             psuedo_flag = False
             for p in psuedo:
@@ -158,11 +158,11 @@ class Negex:
                     psuedo_flag == True
                     continue
             if not psuedo_flag:
-                if match_id == self.keys[1]:
+                if self.nlp.vocab.strings[match_id] == "Preceding":
                     preceding.append((match_id, start, end))
-                elif match_id == self.keys[2]:
+                elif self.nlp.vocab.strings[match_id] == "Following":
                     following.append((match_id, start, end))
-                elif match_id == self.keys[3]:
+                elif self.nlp.vocab.strings[match_id] == "Termination":
                     terminating.append((match_id, start, end))
                 else:
                     logging.warnings(

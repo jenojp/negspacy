@@ -3,7 +3,7 @@ import io
 
 setup(
     name = 'negspacy',
-    version = 'v0.1.5',
+    version = 'v0.1.6',
     url = 'https://github.com/jenojp/negspacy',
     author = 'Jeno Pizarro',
     author_email = 'jenopizzaro@gmail.com',
@@ -22,7 +22,7 @@ setup(
     packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     license="MIT",
     install_requires=[
-        "spacy==2.1.8",
+        "spacy>=2.1.8",
         ],
     tests_require=[
         "pytest",
