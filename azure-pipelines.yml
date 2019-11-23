@@ -58,3 +58,13 @@ steps:
 - script: |
     python setup.py sdist
   displayName: 'build sdist'
+
+- bash: |
+    SDIST=$(python -c "import os;print(os.listdir('./dist')[-1])" 2>&1)
+    pip install dist/$SDIST
+  displayName: 'Install from sdist'
+
+- script: |
+    cd negspacy
+    python -m pytest test.py
+  displayName: 'pytest'
