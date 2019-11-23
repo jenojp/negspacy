@@ -56,5 +56,5 @@ steps:
   displayName: 'pytest'
 
 - script: |
-    python -m setup.py sdist
+    python setup.py sdist
   displayName: 'build sdist'
