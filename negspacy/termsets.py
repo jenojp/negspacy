@@ -65,6 +65,7 @@ en["preceding_negations"] = [
     "cant",
     "couldn't",
     "couldnt",
+    "never",
 ]
 en["following_negations"] = [
     "declined",
