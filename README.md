@@ -53,7 +53,7 @@ Consider pairing with [scispacy](https://allenai.github.io/scispacy/) to find UM
 
 ### Termsets
 
-Designate termset to use, `en` is used by default.
+Designate termset to use, `en_clinical` is used by default.
 
 `negex = Negex(nlp, language = "en_clinical")`
 
