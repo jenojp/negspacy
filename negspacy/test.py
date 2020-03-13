@@ -87,6 +87,17 @@ def test():
             print(e.text, e._.negex)
             assert (e.text, e._.negex) == d[1][i]
 
+def test_en():
+    nlp = spacy.load("en_core_web_sm")
+    negex = Negex(nlp, language= "en")
+    nlp.add_pipe(negex, last=True)
+    docs = build_docs()
+    for d in docs:
+        doc = nlp(d[0])
+        for i, e in enumerate(doc.ents):
+            print(e.text, e._.negex)
+            assert (e.text, e._.negex) == d[1][i]
+
 
 def test_umls():
     nlp = spacy.load("en_core_sci_sm")
