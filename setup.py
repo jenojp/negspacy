@@ -3,7 +3,7 @@ import io
 
 setup(
     name = 'negspacy',
-    version = 'v0.1.6',
+    version = 'v0.1.7',
     url = 'https://github.com/jenojp/negspacy',
     author = 'Jeno Pizarro',
     author_email = 'jenopizzaro@gmail.com',
@@ -13,9 +13,11 @@ setup(
     keywords = ["nlp spacy SpaCy negation"],
     classifiers=[
         'Intended Audience :: Science/Research',
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],

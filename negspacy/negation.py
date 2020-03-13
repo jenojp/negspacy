@@ -20,7 +20,7 @@ class Negex:
         list of entity types to negate
     language: str
         language code, if using default termsets (e.g. "en" for english)
-    psuedo_negations: list
+    pseudo_negations: list
         list of phrases that cancel out a negation, if empty, defaults are used
     preceding_negations: list
         negations that appear before an entity, if empty, defaults are used
@@ -34,9 +34,9 @@ class Negex:
     def __init__(
         self,
         nlp,
-        language="en",
+        language="en_clinical",
         ent_types=list(),
-        psuedo_negations=list(),
+        pseudo_negations=list(),
         preceding_negations=list(),
         following_negations=list(),
         termination=list(),
@@ -52,10 +52,10 @@ class Negex:
         if not Span.has_extension("negex"):
             Span.set_extension("negex", default=False, force=True)
 
-        if not psuedo_negations:
-            if not "psuedo_negations" in termsets:
-                raise KeyError("psuedo_negations not specified for this language.")
-            psuedo_negations = termsets["psuedo_negations"]
+        if not pseudo_negations:
+            if not "pseudo_negations" in termsets:
+                raise KeyError("pseudo_negations not specified for this language.")
+            pseudo_negations = termsets["pseudo_negations"]
 
         if not preceding_negations:
             if not "preceding_negations" in termsets:
@@ -73,13 +73,13 @@ class Negex:
             termination = termsets["termination"]
 
         # efficiently build spaCy matcher patterns
-        self.psuedo_patterns = list(nlp.tokenizer.pipe(psuedo_negations))
+        self.pseudo_patterns = list(nlp.tokenizer.pipe(pseudo_negations))
         self.preceding_patterns = list(nlp.tokenizer.pipe(preceding_negations))
         self.following_patterns = list(nlp.tokenizer.pipe(following_negations))
         self.termination_patterns = list(nlp.tokenizer.pipe(termination))
 
         self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-        self.matcher.add("Psuedo", None, *self.psuedo_patterns)
+        self.matcher.add("pseudo", None, *self.pseudo_patterns)
         self.matcher.add("Preceding", None, *self.preceding_patterns)
         self.matcher.add("Following", None, *self.following_patterns)
         self.matcher.add("Termination", None, *self.termination_patterns)
@@ -99,7 +99,7 @@ class Negex:
 
         """
         patterns = {
-            "psuedo_patterns": self.psuedo_patterns,
+            "pseudo_patterns": self.pseudo_patterns,
             "preceding_patterns": self.preceding_patterns,
             "following_patterns": self.following_patterns,
             "termination_patterns": self.termination_patterns,
@@ -143,21 +143,21 @@ class Negex:
         terminating = list()
 
         matches = self.matcher(doc)
-        psuedo = [
+        pseudo = [
             (match_id, start, end)
             for match_id, start, end in matches
-            if self.nlp.vocab.strings[match_id] == "Psuedo"
+            if self.nlp.vocab.strings[match_id] == "pseudo"
         ]
 
         for match_id, start, end in matches:
-            if self.nlp.vocab.strings[match_id] == "Psuedo":
+            if self.nlp.vocab.strings[match_id] == "pseudo":
                 continue
-            psuedo_flag = False
-            for p in psuedo:
+            pseudo_flag = False
+            for p in pseudo:
                 if start >= p[1] and start <= p[2]:
-                    psuedo_flag == True
+                    pseudo_flag = True
                     continue
-            if not psuedo_flag:
+            if not pseudo_flag:
                 if self.nlp.vocab.strings[match_id] == "Preceding":
                     preceding.append((match_id, start, end))
                 elif self.nlp.vocab.strings[match_id] == "Following":
