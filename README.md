@@ -6,8 +6,8 @@
 
 spaCy pipeline object for negating concepts in text. Based on the NegEx algorithm.
 
-*NegEx - A Simple Algorithm for Identifying Negated Findings and Diseasesin Discharge Summaries
-Chapman, Bridewell, Hanbury, Cooper, Buchanan*
+**NegEx - A Simple Algorithm for Identifying Negated Findings and Diseases in Discharge Summaries
+Chapman, Bridewell, Hanbury, Cooper, Buchanan**
 
 ## Installation and usage
 Install the library.
@@ -50,6 +50,12 @@ Consider pairing with [scispacy](https://allenai.github.io/scispacy/) to find UM
 * **following_negations** - negation phrases that follow an entity
 * **termination** - phrases that cut a sentence in parts, for purposes of negation detection (.e.g., "but")
 
+### Termsets
+
+* `en` = phrases for general english language text
+* `en_clinical` = adds phrases specific to clinical domain
+* `en_clinical_sensitive` = adds additional phrases to help rule out historical and possibly irrelevant entities
+
 ## Additional Functionality
 
 ### Use own patterns or view patterns in use
@@ -80,7 +86,7 @@ This would cause the Negex algorithm to miss the preceding negation. To account 
 
 ```python
 nlp = spacy.load("en_core_sci_sm")
-negex = Negex(nlp, chunk_prefix = ["no"])
+negex = Negex(nlp, language = "en_clinical", chunk_prefix = ["no"])
 nlp.add_pipe(negex)
 doc = nlp("There is no headache.")
 for e in doc.ents:
