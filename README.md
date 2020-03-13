@@ -6,8 +6,9 @@
 
 spaCy pipeline object for negating concepts in text. Based on the NegEx algorithm.
 
-**NegEx - A Simple Algorithm for Identifying Negated Findings and Diseases in Discharge Summaries
-Chapman, Bridewell, Hanbury, Cooper, Buchanan**
+***NegEx - A Simple Algorithm for Identifying Negated Findings and Diseases in Discharge Summaries
+Chapman, Bridewell, Hanbury, Cooper, Buchanan***
+[https://doi.org/10.1006/jbin.2001.1029](https://doi.org/10.1006/jbin.2001.1029)
 
 ## Installation and usage
 Install the library.
@@ -46,14 +47,18 @@ Consider pairing with [scispacy](https://allenai.github.io/scispacy/) to find UM
 ## NegEx Patterns
 
 * **psuedo_negations** - phrases that are false triggers, ambiguous negations, or double negatives
-* **preceding_negations** - negation phrases that preceed an entity
+* **preceding_negations** - negation phrases that precede an entity
 * **following_negations** - negation phrases that follow an entity
 * **termination** - phrases that cut a sentence in parts, for purposes of negation detection (.e.g., "but")
 
 ### Termsets
 
+Designate termset to use, `en` is used by default.
+
+`negex = Negex(nlp, language = "en_clinical")`
+
 * `en` = phrases for general english language text
-* `en_clinical` = adds phrases specific to clinical domain
+* `en_clinical` **DEFAULT** = adds phrases specific to clinical domain to general english
 * `en_clinical_sensitive` = adds additional phrases to help rule out historical and possibly irrelevant entities
 
 ## Additional Functionality

@@ -34,7 +34,7 @@ class Negex:
     def __init__(
         self,
         nlp,
-        language="en",
+        language="en_clinical",
         ent_types=list(),
         pseudo_negations=list(),
         preceding_negations=list(),
