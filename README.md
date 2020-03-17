@@ -114,6 +114,6 @@ for e in doc.ents:
 
 This library is featured in the [spaCy Universe](https://spacy.io/universe). Check it out for other useful libraries and inspiration.
 
-If you're looking for a spaCy pipeline object to extracting values that correspond to a named entity (e.g., birth dates, account numbers, or laboratory results) take a look at [extractacy](https://github.com/jenojp/extractacy).
+If you're looking for a spaCy pipeline object to extract values that correspond to a named entity (e.g., birth dates, account numbers, or laboratory results) take a look at [extractacy](https://github.com/jenojp/extractacy).
 
 <p align="left"><img width="40%" src="https://github.com/jenojp/extractacy/blob/master/docs/icon.png?raw=true" /></p>
