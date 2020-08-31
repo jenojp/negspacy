@@ -20,6 +20,8 @@ class Negex:
         list of entity types to negate
     language: str
         language code, if using default termsets (e.g. "en" for english)
+    extension_name: str
+        defaults to "negex"; whether entity is negated is then available as ent._.negex
     pseudo_negations: list
         list of phrases that cancel out a negation, if empty, defaults are used
     preceding_negations: list
