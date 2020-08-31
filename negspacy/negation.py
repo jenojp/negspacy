@@ -36,6 +36,7 @@ class Negex:
         nlp,
         language="en_clinical",
         ent_types=list(),
+        extension_name="negex",
         pseudo_negations=list(),
         preceding_negations=list(),
         following_negations=list(),
@@ -49,8 +50,8 @@ class Negex:
                 "your own termsets when initializing Negex."
             )
         termsets = LANGUAGES[language]
-        if not Span.has_extension("negex"):
-            Span.set_extension("negex", default=False, force=True)
+        if not Span.has_extension(extension_name):
+            Span.set_extension(extension_name, default=False, force=True)
 
         if not pseudo_negations:
             if not "pseudo_negations" in termsets:
