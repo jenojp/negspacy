@@ -221,17 +221,17 @@ class Negex:
                     if e.label_ not in self.ent_types:
                         continue
                 if any(pre < e.start for pre in [i[1] for i in sub_preceding]):
-                    e._.negex = True
+                    e._.set(extension_name, True)
                     continue
                 if any(fol > e.end for fol in [i[2] for i in sub_following]):
-                    e._.negex = True
+                    e._.set(extension_name, True)
                     continue
                 if self.chunk_prefix:
                     if any(
                         c.text.lower() == doc[e.start].text.lower()
                         for c in self.chunk_prefix
                     ):
-                        e._.negex = True
+                        e._.set(extension_name, True)
         return doc
 
     def __call__(self, doc):
