@@ -20,6 +20,8 @@ class Negex:
         list of entity types to negate
     language: str
         language code, if using default termsets (e.g. "en" for english)
+    extension_name: str
+        defaults to "negex"; whether entity is negated is then available as ent._.negex
     pseudo_negations: list
         list of phrases that cancel out a negation, if empty, defaults are used
     preceding_negations: list
@@ -36,6 +38,7 @@ class Negex:
         nlp,
         language="en_clinical",
         ent_types=list(),
+        extension_name="negex",
         pseudo_negations=list(),
         preceding_negations=list(),
         following_negations=list(),
@@ -49,8 +52,8 @@ class Negex:
                 "your own termsets when initializing Negex."
             )
         termsets = LANGUAGES[language]
-        if not Span.has_extension("negex"):
-            Span.set_extension("negex", default=False, force=True)
+        if not Span.has_extension(extension_name):
+            Span.set_extension(extension_name, default=False, force=True)
 
         if not pseudo_negations:
             if not "pseudo_negations" in termsets:
@@ -85,6 +88,7 @@ class Negex:
         self.matcher.add("Termination", None, *self.termination_patterns)
         self.nlp = nlp
         self.ent_types = ent_types
+        self.extension_name = extension_name
 
         self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
 
@@ -220,17 +224,17 @@ class Negex:
                     if e.label_ not in self.ent_types:
                         continue
                 if any(pre < e.start for pre in [i[1] for i in sub_preceding]):
-                    e._.negex = True
+                    e._.set(self.extension_name, True)
                     continue
                 if any(fol > e.end for fol in [i[2] for i in sub_following]):
-                    e._.negex = True
+                    e._.set(self.extension_name, True)
                     continue
                 if self.chunk_prefix:
                     if any(
                         c.text.lower() == doc[e.start].text.lower()
                         for c in self.chunk_prefix
                     ):
-                        e._.negex = True
+                        e._.set(self.extension_name, True)
         return doc
 
     def __call__(self, doc):
