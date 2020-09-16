@@ -75,22 +75,37 @@ class Negex:
                 raise KeyError("termination not specified for this language.")
             termination = termsets["termination"]
 
-        # efficiently build spaCy matcher patterns
-        self.pseudo_patterns = list(nlp.tokenizer.pipe(pseudo_negations))
-        self.preceding_patterns = list(nlp.tokenizer.pipe(preceding_negations))
-        self.following_patterns = list(nlp.tokenizer.pipe(following_negations))
-        self.termination_patterns = list(nlp.tokenizer.pipe(termination))
-
-        self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-        self.matcher.add("pseudo", None, *self.pseudo_patterns)
-        self.matcher.add("Preceding", None, *self.preceding_patterns)
-        self.matcher.add("Following", None, *self.following_patterns)
-        self.matcher.add("Termination", None, *self.termination_patterns)
+        self.add_patterns(pseudo_negations,preceding_negations,following_negations,termination)
         self.nlp = nlp
         self.ent_types = ent_types
         self.extension_name = extension_name
 
         self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
+    
+    def add_patterns(self, pseudo_negations,preceding_negations,following_negations,termination)
+     # efficiently build spaCy matcher patterns
+        if any([pseudo_negations,preceding_negations,following_negations,termination]) 
+        self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
+        if pseudo_negations:
+            if not isinstance(pseudo_negations, list):
+                raise ValueError("A list of phrases expected when adding patterns")
+            self.pseudo_patterns = list(nlp.tokenizer.pipe(pseudo_negations))
+            self.matcher.add("pseudo", None, *self.pseudo_patterns)
+        if preceding_negations:
+            if not isinstance(preceding_negations, list):
+                raise ValueError("A list of phrases expected when adding patterns")
+            self.preceding_patterns = list(nlp.tokenizer.pipe(preceding_negations))
+            self.matcher.add("Preceding", None, *self.preceding_patterns)
+        if following_negations:
+            if not isinstance(following_negations, list):
+                raise ValueError("A list of phrases expected when adding patterns")
+            self.following_patterns = list(nlp.tokenizer.pipe(following_negations))
+            self.matcher.add("Following", None, *self.following_patterns)
+        if termination:
+            if not isinstance(termination, list):
+                raise ValueError("A list of phrases expected when adding patterns")
+            self.termination_patterns = list(nlp.tokenizer.pipe(termination))
+            self.matcher.add("Termination", None, *self.termination_patterns)
 
     def get_patterns(self):
         """
