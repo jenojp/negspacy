@@ -169,7 +169,7 @@ def test_add_patterns():
     print(patterns_after)
     print(len(patterns_after["pseudo_patterns"]))
     assert len(patterns_after["pseudo_patterns"]) - 1 == len(patterns["pseudo_patterns"])
-    assert len(patterns_after["termination"]) - 2 == len(patterns["termination"])
+    assert len(patterns_after["termination_patterns"]) - 2 == len(patterns["termination_patterns"])
 
 
 if __name__ == "__main__":
