@@ -84,7 +84,6 @@ class Negex:
     
     def add_patterns(self, pseudo_negations,preceding_negations,following_negations,termination):
      # efficiently build spaCy matcher patterns
-        if any([pseudo_negations,preceding_negations,following_negations,termination]) 
         self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
         if pseudo_negations:
             if not isinstance(pseudo_negations, list):
