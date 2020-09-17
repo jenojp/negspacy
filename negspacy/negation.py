@@ -82,7 +82,7 @@ class Negex:
 
         self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
     
-    def add_patterns(self, pseudo_negations,preceding_negations,following_negations,termination)
+    def add_patterns(self, pseudo_negations,preceding_negations,following_negations,termination):
      # efficiently build spaCy matcher patterns
         if any([pseudo_negations,preceding_negations,following_negations,termination]) 
         self.matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
