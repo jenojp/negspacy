@@ -166,8 +166,10 @@ def test_add_patterns():
     patterns = negex.get_patterns()
     negex.add_patterns(pseudo_negations=["my favorite pattern"], termination=["these are", "great patterns"])
     patterns_after = negex.get_patterns()
-    assert (len(patterns_after["psuedo_patterns"]) - 1) == len(patterns["psuedo_patterns"])
-    assert (len(patterns_after["termination"]) - 2) == len(patterns["termination"])
+    print(patterns_after)
+    print(len(patterns_after["pseudo_patterns"]))
+    assert len(patterns_after["pseudo_patterns"]) - 1 == len(patterns["pseudo_patterns"])
+    assert len(patterns_after["termination"]) - 2 == len(patterns["termination"])
 
 
 if __name__ == "__main__":
@@ -177,3 +179,4 @@ if __name__ == "__main__":
     test_own_terminology()
     test_get_patterns()
     test_issue7()
+    test_add_patterns()
