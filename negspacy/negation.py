@@ -105,6 +105,33 @@ class Negex:
         self.termination_patterns = list(self.nlp.tokenizer.pipe(self.termination))
         self.matcher.add("Termination", None, *self.termination_patterns)
 
+    def remove_patterns(self, pseudo_negations=None,preceding_negations=None,following_negations=None,termination=None):
+        if pseudo_negations:
+            if isinstance(pseudo_negations, list):
+                for p in pseudo_negations:
+                    self.pseudo_negations.remove(p)
+            else:
+                self.pseudo_negations.remove(pseudo_negations)
+        if preceding_negations:
+            if isinstance(preceding_negations, list):
+                for p in preceding_negations:
+                    self.preceding_negations.remove(p)
+            else:
+                self.preceding_negations.remove(preceding_negations)
+        if following_negations:
+            if isinstance(following_negations, list):
+                for p in following_negations:
+                    self.following_negations.remove(p)
+            else:
+                self.following_negations.extend(following_negations)
+        if termination:
+            if isinstance(termination, list):
+                for p in termination:
+                    self.termination.remove(p)
+            else:
+                self.termination.remove(termination)
+        self.build_patterns()
+
     def add_patterns(self, pseudo_negations=None,preceding_negations=None,following_negations=None,termination=None):
         if pseudo_negations:
             if not isinstance(pseudo_negations, list):

@@ -160,7 +160,7 @@ def test_issue7():
     patterns = [{"label": "SOFTWARE", "pattern": "spacy"}]
     doc = nlp("fgfgdghgdh")
 
-def test_add_patterns():
+def test_add_remove_patterns():
     nlp = spacy.load("en_core_web_sm")
     negex = Negex(nlp)
     patterns = negex.get_patterns()
@@ -171,6 +171,10 @@ def test_add_patterns():
     assert len(patterns_after["pseudo_patterns"]) - 1 == len(patterns["pseudo_patterns"])
     assert len(patterns_after["termination_patterns"]) - 2 == len(patterns["termination_patterns"])
 
+    negex.remove_patterns(termination=["these are", "great patterns"], pseudo_negations=["my favorite pattern"], preceding_negations="denied", following_negations=["unlikely"])
+    negex.remove_patterns(termination="but")
+    patterns_after = negex.get_patterns()
+    assert len(patterns_after["termination_patterns"]) == len(patterns["termination_patterns"]) -1
 
 if __name__ == "__main__":
     test()
@@ -179,4 +183,4 @@ if __name__ == "__main__":
     test_own_terminology()
     test_get_patterns()
     test_issue7()
-    test_add_patterns()
+    test_add_remove_patterns()
