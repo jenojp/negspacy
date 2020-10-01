@@ -88,24 +88,34 @@ class Negex:
         self.extension_name = extension_name
         self.build_patterns()
         self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
-    
+
     def build_patterns(self):
         # efficiently build spaCy matcher patterns
         self.matcher = PhraseMatcher(self.nlp.vocab, attr="LOWER")
-        
+
         self.pseudo_patterns = list(self.nlp.tokenizer.pipe(self.pseudo_negations))
         self.matcher.add("pseudo", None, *self.pseudo_patterns)
 
-        self.preceding_patterns = list(self.nlp.tokenizer.pipe(self.preceding_negations))
+        self.preceding_patterns = list(
+            self.nlp.tokenizer.pipe(self.preceding_negations)
+        )
         self.matcher.add("Preceding", None, *self.preceding_patterns)
 
-        self.following_patterns = list(self.nlp.tokenizer.pipe(self.following_negations))
+        self.following_patterns = list(
+            self.nlp.tokenizer.pipe(self.following_negations)
+        )
         self.matcher.add("Following", None, *self.following_patterns)
 
         self.termination_patterns = list(self.nlp.tokenizer.pipe(self.termination))
         self.matcher.add("Termination", None, *self.termination_patterns)
 
-    def remove_patterns(self, pseudo_negations=None,preceding_negations=None,following_negations=None,termination=None):
+    def remove_patterns(
+        self,
+        pseudo_negations=None,
+        preceding_negations=None,
+        following_negations=None,
+        termination=None,
+    ):
         if pseudo_negations:
             if isinstance(pseudo_negations, list):
                 for p in pseudo_negations:
@@ -132,7 +142,13 @@ class Negex:
                 self.termination.remove(termination)
         self.build_patterns()
 
-    def add_patterns(self, pseudo_negations=None,preceding_negations=None,following_negations=None,termination=None):
+    def add_patterns(
+        self,
+        pseudo_negations=None,
+        preceding_negations=None,
+        following_negations=None,
+        termination=None,
+    ):
         if pseudo_negations:
             if not isinstance(pseudo_negations, list):
                 raise ValueError("A list of phrases expected when adding patterns")
