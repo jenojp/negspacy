@@ -3,7 +3,7 @@ import io
 
 setup(
     name = 'negspacy',
-    version = 'v0.1.7',
+    version = 'v0.1.8',
     url = 'https://github.com/jenojp/negspacy',
     author = 'Jeno Pizarro',
     author_email = 'jenopizzaro@gmail.com',
