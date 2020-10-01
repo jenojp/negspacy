@@ -87,9 +87,10 @@ def test():
             print(e.text, e._.negex)
             assert (e.text, e._.negex) == d[1][i]
 
+
 def test_en():
     nlp = spacy.load("en_core_web_sm")
-    negex = Negex(nlp, language= "en")
+    negex = Negex(nlp, language="en")
     nlp.add_pipe(negex, last=True)
     docs = build_docs()
     for d in docs:
@@ -161,6 +162,58 @@ def test_issue7():
     doc = nlp("fgfgdghgdh")
 
 
+def test_add_remove_patterns():
+    nlp = spacy.load("en_core_web_sm")
+    negex = Negex(nlp)
+    patterns = negex.get_patterns()
+    negex.add_patterns(
+        pseudo_negations=["my favorite pattern"],
+        termination=["these are", "great patterns"],
+        preceding_negations=["wow a negation"],
+        following_negations=["extra negation"],
+    )
+    patterns_after = negex.get_patterns()
+    print(patterns_after)
+    print(len(patterns_after["pseudo_patterns"]))
+    assert len(patterns_after["pseudo_patterns"]) - 1 == len(
+        patterns["pseudo_patterns"]
+    )
+    assert len(patterns_after["termination_patterns"]) - 2 == len(
+        patterns["termination_patterns"]
+    )
+    assert len(patterns_after["preceding_patterns"]) - 1 == len(
+        patterns["preceding_patterns"]
+    )
+    assert len(patterns_after["following_patterns"]) - 1 == len(
+        patterns["following_patterns"]
+    )
+
+    negex.remove_patterns(
+        termination=["these are", "great patterns"],
+        pseudo_negations=["my favorite pattern"],
+        preceding_negations="denied",
+        following_negations=["unlikely"],
+    )
+    negex.remove_patterns(termination="but")
+    negex.remove_patterns(
+        preceding_negations="wow a negation", following_negations=["extra negation"]
+    )
+    patterns_after = negex.get_patterns()
+    assert (
+        len(patterns_after["termination_patterns"])
+        == len(patterns["termination_patterns"]) - 1
+    )
+    assert (
+        len(patterns_after["following_patterns"])
+        == len(patterns["following_patterns"]) - 1
+    )
+    assert (
+        len(patterns_after["preceding_patterns"])
+        == len(patterns["preceding_patterns"]) - 1
+    )
+    assert len(patterns_after["pseudo_patterns"]) == len(patterns["pseudo_patterns"])
+
+
 if __name__ == "__main__":
     test()
     test_umls()
@@ -168,3 +221,4 @@ if __name__ == "__main__":
     test_own_terminology()
     test_get_patterns()
     test_issue7()
+    test_add_remove_patterns()
