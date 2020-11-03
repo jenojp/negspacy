@@ -63,20 +63,15 @@ Designate termset to use, `en_clinical` is used by default.
 
 ## Additional Functionality
 
-### Use own patterns or view patterns in use
+### Change patterns or view patterns in use
 
-Use own patterns
+Replace all patterns with your own set
 ```python
 nlp = spacy.load("en_core_web_sm")
 negex = Negex(nlp, termination=["but", "however", "nevertheless", "except"])
 ```
 
-View patterns in use
-```python
-patterns_dict = negex.get_patterns
-```
-
-Add and remove patterns on the fly
+Add and remove individual patterns on the fly
 ```python
 negex.add_patterns(
     pseudo_negations=["my favorite pattern"],
@@ -93,6 +88,10 @@ negex.remove_patterns(
 ```
 Note: A list is required when adding any amount of patterns but only required when removing multiple patterns. 
 
+View patterns in use
+```python
+patterns_dict = negex.get_patterns
+```
 
 
 ### Negations in noun chunks
