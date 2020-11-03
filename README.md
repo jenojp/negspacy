@@ -76,6 +76,25 @@ View patterns in use
 patterns_dict = negex.get_patterns
 ```
 
+Add and remove patterns on the fly
+```python
+negex.add_patterns(
+    pseudo_negations=["my favorite pattern"],
+    termination=["these are", "great patterns"],
+    preceding_negations=["more patterns"],
+    following_negations=["even more patterns"],
+)
+negex.remove_patterns(
+    pseudo_negations=["my favorite pattern"],
+    termination=["these are", "great patterns"],
+    preceding_negations="denied",
+    following_negations=["unlikely"],
+    )
+```
+Note: A list is required when adding any amount of patterns but only required when removing multiple patterns. 
+
+
+
 ### Negations in noun chunks
 
 Depending on the Named Entity Recognition model you are using, you may have negations "chunked together" with nouns. For example when using scispacy:
