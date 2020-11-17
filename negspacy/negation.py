@@ -133,7 +133,7 @@ class Negex:
                 for p in following_negations:
                     self.following_negations.remove(p)
             else:
-                self.following_negations.extend(following_negations)
+                self.following_negations.remove(following_negations)
         if termination:
             if isinstance(termination, list):
                 for p in termination:
@@ -306,7 +306,7 @@ class Negex:
                     continue
                 if self.chunk_prefix:
                     if any(
-                        c.text.lower() == doc[e.start].text.lower()
+                        e.text.lower().startswith(c.text.lower())
                         for c in self.chunk_prefix
                     ):
                         e._.set(self.extension_name, True)
