@@ -36,7 +36,7 @@ def build_med_docs():
         (
             "Patient denies cardiovascular disease but has headaches. No history of smoking. Alcoholism unlikely. Smoking not ruled out.",
             [
-                ("Patient denies", False),
+                ("Patient", False),
                 ("cardiovascular disease", True),
                 ("headaches", False),
                 ("No history", True),
@@ -63,7 +63,7 @@ def build_med_docs():
     docs.append(
         (
             "Alcoholism was not the cause of liver disease.",
-            [("Alcoholism", True), ("cause", False), ("liver disease", False)],
+            [("Alcoholism", True), ("liver disease", False)],
         )
     )
 
@@ -213,6 +213,21 @@ def test_add_remove_patterns():
     )
     assert len(patterns_after["pseudo_patterns"]) == len(patterns["pseudo_patterns"])
 
+def test_issue_14():
+    nlp = spacy.load("en_core_sci_sm")
+    negex = Negex(
+        nlp, language="en_clinical", chunk_prefix=["no", "cancer free"]
+    )
+    negex.remove_patterns(following_negations="free")
+    nlp.add_pipe(negex, last=True)
+    print(negex.get_patterns())
+
+    doc = nlp("The patient has a cancer free diagnosis")
+    expected = [False, True]
+    for i, e in enumerate(doc.ents):
+        print(e.text, e._.negex)
+        assert e._.negex == expected[i]
+    
 
 if __name__ == "__main__":
     test()
@@ -222,3 +237,4 @@ if __name__ == "__main__":
     test_get_patterns()
     test_issue7()
     test_add_remove_patterns()
+    test_issue_14()
