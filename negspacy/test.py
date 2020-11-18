@@ -196,7 +196,7 @@ def test_add_remove_patterns():
     )
     negex.remove_patterns(termination="but")
     negex.remove_patterns(
-        preceding_negations="wow a negation", following_negations=["extra negation"]
+        preceding_negations="wow a negation", following_negations="extra negation"
     )
     patterns_after = negex.get_patterns()
     assert (
@@ -213,11 +213,10 @@ def test_add_remove_patterns():
     )
     assert len(patterns_after["pseudo_patterns"]) == len(patterns["pseudo_patterns"])
 
+
 def test_issue_14():
     nlp = spacy.load("en_core_sci_sm")
-    negex = Negex(
-        nlp, language="en_clinical", chunk_prefix=["no", "cancer free"]
-    )
+    negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "cancer free"])
     negex.remove_patterns(following_negations="free")
     nlp.add_pipe(negex, last=True)
     print(negex.get_patterns())
@@ -227,7 +226,16 @@ def test_issue_14():
     for i, e in enumerate(doc.ents):
         print(e.text, e._.negex)
         assert e._.negex == expected[i]
-    
+
+    nlp.remove_pipe("Negex")
+    negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "free"])
+    nlp.add_pipe(negex, last=True)
+    doc = nlp("The patient has a cancer free diagnosis")
+    expected = [False, False]
+    for i, e in enumerate(doc.ents):
+        print(e.text, e._.negex)
+        assert e._.negex == expected[i]
+
 
 if __name__ == "__main__":
     test()

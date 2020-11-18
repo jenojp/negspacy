@@ -7,9 +7,9 @@ from negspacy.termsets import LANGUAGES
 
 class Negex:
     """
-	A spaCy pipeline component which identifies negated tokens in text.
+        A spaCy pipeline component which identifies negated tokens in text.
 
-	Based on: NegEx - A Simple Algorithm for Identifying Negated Findings and Diseasesin Discharge Summaries
+        Based on: NegEx - A Simple Algorithm for Identifying Negated Findings and Diseasesin Discharge Summaries
     Chapman, Bridewell, Hanbury, Cooper, Buchanan
 
     Parameters
@@ -31,7 +31,7 @@ class Negex:
     termination: list
         phrases that "terminate" a sentence for processing purposes such as "but". If empty, defaults are used
 
-	"""
+    """
 
     def __init__(
         self,
@@ -170,7 +170,7 @@ class Negex:
     def get_patterns(self):
         """
         returns phrase patterns used for various negation dictionaries
-        
+
         Returns
         -------
         patterns: dict
@@ -191,7 +191,7 @@ class Negex:
         """
         Find negations in doc and clean candidate negations to remove pseudo negations
 
-        Parameters 
+        Parameters
         ----------
         doc: object
             spaCy Doc object
@@ -282,7 +282,7 @@ class Negex:
         """
         Negates entities of interest
 
-        Parameters 
+        Parameters
         ----------
         doc: object
             spaCy Doc object
