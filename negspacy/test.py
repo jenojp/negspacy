@@ -79,7 +79,7 @@ def build_med_docs():
 def test():
     nlp = spacy.load("en_core_web_sm")
     negex = Negex(nlp)
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     docs = build_docs()
     for d in docs:
         doc = nlp(d[0])
@@ -91,7 +91,7 @@ def test():
 def test_en():
     nlp = spacy.load("en_core_web_sm")
     negex = Negex(nlp, language="en")
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     docs = build_docs()
     for d in docs:
         doc = nlp(d[0])
@@ -105,7 +105,7 @@ def __test_umls():
     negex = Negex(
         nlp, language="en_clinical", ent_types=["ENTITY"], chunk_prefix=["no"]
     )
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     docs = build_med_docs()
     for d in docs:
         doc = nlp(d[0])
@@ -119,7 +119,7 @@ def __test_umls2():
     negex = Negex(
         nlp, language="en_clinical_sensitive", ent_types=["ENTITY"], chunk_prefix=["no"]
     )
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     docs = build_med_docs()
     for d in docs:
         doc = nlp(d[0])
@@ -140,7 +140,7 @@ def __test_umls2():
 def test_own_terminology():
     nlp = spacy.load("en_core_web_sm")
     negex = Negex(nlp, termination=["whatever"])
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     doc = nlp("He does not like Steve Jobs whatever he says about Barack Obama.")
     assert doc.ents[1]._.negex == False
 
@@ -156,7 +156,7 @@ def test_get_patterns():
 def test_issue7():
     nlp = spacy.load("en_core_web_sm")
     negex = Negex(nlp)
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     ruler = EntityRuler(nlp)
     patterns = [{"label": "SOFTWARE", "pattern": "spacy"}]
     doc = nlp("fgfgdghgdh")
@@ -218,7 +218,7 @@ def __test_issue_14():
     nlp = spacy.load("en_core_sci_sm")
     negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "cancer free"])
     negex.remove_patterns(following_negations="free")
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     print(negex.get_patterns())
 
     doc = nlp("The patient has a cancer free diagnosis")
@@ -229,7 +229,7 @@ def __test_issue_14():
 
     nlp.remove_pipe("Negex")
     negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "free"])
-    nlp.add_pipe(negex, last=True)
+    nlp.add_pipe("negex", last=True)
     doc = nlp("The patient has a cancer free diagnosis")
     expected = [False, False]
     for i, e in enumerate(doc.ents):
