@@ -1,3 +1,5 @@
+spaCy 3.0 support coming soon
+
 <p align="center"><img width="40%" src="docs/icon.png" /></p>
 
 
