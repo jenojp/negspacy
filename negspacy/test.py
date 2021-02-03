@@ -100,7 +100,7 @@ def test_en():
             assert (e.text, e._.negex) == d[1][i]
 
 
-def test_umls():
+def __test_umls():
     nlp = spacy.load("en_core_sci_sm")
     negex = Negex(
         nlp, language="en_clinical", ent_types=["ENTITY"], chunk_prefix=["no"]
@@ -114,7 +114,7 @@ def test_umls():
             assert (e.text, e._.negex) == d[1][i]
 
 
-def test_umls2():
+def __test_umls2():
     nlp = spacy.load("en_core_sci_sm")
     negex = Negex(
         nlp, language="en_clinical_sensitive", ent_types=["ENTITY"], chunk_prefix=["no"]
@@ -214,7 +214,7 @@ def test_add_remove_patterns():
     assert len(patterns_after["pseudo_patterns"]) == len(patterns["pseudo_patterns"])
 
 
-def test_issue_14():
+def __test_issue_14():
     nlp = spacy.load("en_core_sci_sm")
     negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "cancer free"])
     negex.remove_patterns(following_negations="free")
@@ -240,6 +240,8 @@ def test_issue_14():
 if __name__ == "__main__":
     test()
     test_umls()
+    test_umls2()
+    test_en()
     test_bad_beharor()
     test_own_terminology()
     test_get_patterns()

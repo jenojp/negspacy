@@ -1,3 +1,4 @@
+from spacy.language import Language
 from spacy.tokens import Token, Doc, Span
 from spacy.matcher import PhraseMatcher
 import logging
@@ -5,6 +6,9 @@ import logging
 from negspacy.termsets import LANGUAGES
 
 
+# def create_negex_component(nlp: Language, name: str, termset_lang: str, ent_types: list, extension_name: str, pseudo_negations: list, preceding_negations: list, following_negations: list, termination: list, chunk_prefix: list):
+#     return Negex(nlp, termset_lang, ent_types, extension_name, pseudo_negations, preceding_negations, following_negations, termination, chunk_prefix)
+@Language.factory("negex", default_config={"termset_lang":"en_clinical", "ent_types":list(), "extension_name":"negex", "pseudo_negations":list(), "preceding_negations":list(), "following_negations":list(),"termination":list(), "chunk_prefix":list()})
 class Negex:
     """
         A spaCy pipeline component which identifies negated tokens in text.
@@ -18,7 +22,7 @@ class Negex:
         spaCy language object
     ent_types: list
         list of entity types to negate
-    language: str
+    termset_lang: str
         language code, if using default termsets (e.g. "en" for english)
     extension_name: str
         defaults to "negex"; whether entity is negated is then available as ent._.negex
@@ -35,23 +39,24 @@ class Negex:
 
     def __init__(
         self,
-        nlp,
-        language="en_clinical",
-        ent_types=list(),
-        extension_name="negex",
-        pseudo_negations=list(),
-        preceding_negations=list(),
-        following_negations=list(),
-        termination=list(),
-        chunk_prefix=list(),
+        nlp: Language,
+        name: str,
+        termset_lang: str,
+        ent_types: list,
+        extension_name: str,
+        pseudo_negations: list,
+        preceding_negations: list,
+        following_negations: list,
+        termination: list,
+        chunk_prefix: list,
     ):
-        if not language in LANGUAGES:
+        if not termset_lang in LANGUAGES:
             raise KeyError(
-                f"{language} not found in languages termset. "
-                "Ensure this is a supported language or specify "
+                f"{termset_lang} not found in languages termset. "
+                "Ensure this is a supported termset or specify "
                 "your own termsets when initializing Negex."
             )
-        termsets = LANGUAGES[language]
+        termsets = LANGUAGES[termset_lang]
         if not Span.has_extension(extension_name):
             Span.set_extension(extension_name, default=False, force=True)
 
