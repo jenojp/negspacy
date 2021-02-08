@@ -3,12 +3,12 @@ from spacy.tokens import Token, Doc, Span
 from spacy.matcher import PhraseMatcher
 import logging
 
-from negspacy.termsets import LANGUAGES
+from negspacy.termsets import termset
 
 
 # def create_negex_component(nlp: Language, name: str, termset_lang: str, ent_types: list, extension_name: str, pseudo_negations: list, preceding_negations: list, following_negations: list, termination: list, chunk_prefix: list):
 #     return Negex(nlp, termset_lang, ent_types, extension_name, pseudo_negations, preceding_negations, following_negations, termination, chunk_prefix)
-@Language.factory("negex", default_config={"termset_lang":"en_clinical", "ent_types":list(), "extension_name":"negex", "pseudo_negations":list(), "preceding_negations":list(), "following_negations":list(),"termination":list(), "chunk_prefix":list()})
+@Language.factory("negex", default_config={"termset":None, "ent_types":list(), "extension_name":"negex", "chunk_prefix":list()})
 class Negex:
     """
         A spaCy pipeline component which identifies negated tokens in text.
@@ -41,52 +41,41 @@ class Negex:
         self,
         nlp: Language,
         name: str,
-        termset_lang: str,
+        termset: dict,
         ent_types: list,
         extension_name: str,
-        pseudo_negations: list,
-        preceding_negations: list,
-        following_negations: list,
-        termination: list,
         chunk_prefix: list,
     ):
-        if not termset_lang in LANGUAGES:
-            raise KeyError(
-                f"{termset_lang} not found in languages termset. "
-                "Ensure this is a supported termset or specify "
-                "your own termsets when initializing Negex."
-            )
-        termsets = LANGUAGES[termset_lang]
+        # if not termset_lang in LANGUAGES:
+        #     raise KeyError(
+        #         f"{termset_lang} not found in languages termset. "
+        #         "Ensure this is a supported termset or specify "
+        #         "your own termsets when initializing Negex."
+        #     )
+        # termsets = LANGUAGES[termset_lang]
         if not Span.has_extension(extension_name):
             Span.set_extension(extension_name, default=False, force=True)
 
-        if not pseudo_negations:
-            if not "pseudo_negations" in termsets:
-                raise KeyError("pseudo_negations not specified for this language.")
-            self.pseudo_negations = termsets["pseudo_negations"]
+        if not termset:
+            ts = LANGUAGES["en_clinical"]
         else:
-            self.pseudo_negations = pseudo_negations
+            ts = termset
 
-        if not preceding_negations:
-            if not "preceding_negations" in termsets:
-                raise KeyError("preceding_negations not specified for this language.")
-            self.preceding_negations = termsets["preceding_negations"]
-        else:
-            self.preceding_negations = preceding_negations
+        if not "pseudo_negations" in ts:
+            raise KeyError("pseudo_negations not specified for this language.")
+        self.pseudo_negations = ts["pseudo_negations"]
 
-        if not following_negations:
-            if not "following_negations" in termsets:
-                raise KeyError("following_negations not specified for this language.")
-            self.following_negations = termsets["following_negations"]
-        else:
-            self.following_negations = following_negations
+        if not "preceding_negations" in ts:
+            raise KeyError("preceding_negations not specified for this language.")
+        self.preceding_negations = ts["preceding_negations"]
 
-        if not termination:
-            if not "termination" in termsets:
-                raise KeyError("termination not specified for this language.")
-            self.termination = termsets["termination"]
-        else:
-            self.termination = termination
+        if not "following_negations" in ts:
+            raise KeyError("following_negations not specified for this language.")
+        self.following_negations = ts["following_negations"]
+
+        if not "termination" in ts:
+            raise KeyError("termination not specified for this language.")
+        self.termination = ts["termination"]
 
         self.nlp = nlp
         self.ent_types = ent_types
@@ -114,83 +103,83 @@ class Negex:
         self.termination_patterns = list(self.nlp.tokenizer.pipe(self.termination))
         self.matcher.add("Termination", None, *self.termination_patterns)
 
-    def remove_patterns(
-        self,
-        pseudo_negations=None,
-        preceding_negations=None,
-        following_negations=None,
-        termination=None,
-    ):
-        if pseudo_negations:
-            if isinstance(pseudo_negations, list):
-                for p in pseudo_negations:
-                    self.pseudo_negations.remove(p)
-            else:
-                self.pseudo_negations.remove(pseudo_negations)
-        if preceding_negations:
-            if isinstance(preceding_negations, list):
-                for p in preceding_negations:
-                    self.preceding_negations.remove(p)
-            else:
-                self.preceding_negations.remove(preceding_negations)
-        if following_negations:
-            if isinstance(following_negations, list):
-                for p in following_negations:
-                    self.following_negations.remove(p)
-            else:
-                self.following_negations.remove(following_negations)
-        if termination:
-            if isinstance(termination, list):
-                for p in termination:
-                    self.termination.remove(p)
-            else:
-                self.termination.remove(termination)
-        self.build_patterns()
+    # def remove_patterns(
+    #     self,
+    #     pseudo_negations=None,
+    #     preceding_negations=None,
+    #     following_negations=None,
+    #     termination=None,
+    # ):
+    #     if pseudo_negations:
+    #         if isinstance(pseudo_negations, list):
+    #             for p in pseudo_negations:
+    #                 self.pseudo_negations.remove(p)
+    #         else:
+    #             self.pseudo_negations.remove(pseudo_negations)
+    #     if preceding_negations:
+    #         if isinstance(preceding_negations, list):
+    #             for p in preceding_negations:
+    #                 self.preceding_negations.remove(p)
+    #         else:
+    #             self.preceding_negations.remove(preceding_negations)
+    #     if following_negations:
+    #         if isinstance(following_negations, list):
+    #             for p in following_negations:
+    #                 self.following_negations.remove(p)
+    #         else:
+    #             self.following_negations.remove(following_negations)
+    #     if termination:
+    #         if isinstance(termination, list):
+    #             for p in termination:
+    #                 self.termination.remove(p)
+    #         else:
+    #             self.termination.remove(termination)
+    #     self.build_patterns()
 
-    def add_patterns(
-        self,
-        pseudo_negations=None,
-        preceding_negations=None,
-        following_negations=None,
-        termination=None,
-    ):
-        if pseudo_negations:
-            if not isinstance(pseudo_negations, list):
-                raise ValueError("A list of phrases expected when adding patterns")
-            self.pseudo_negations.extend(pseudo_negations)
-        if preceding_negations:
-            if not isinstance(preceding_negations, list):
-                raise ValueError("A list of phrases expected when adding patterns")
-            self.preceding_negations.extend(preceding_negations)
-        if following_negations:
-            if not isinstance(following_negations, list):
-                raise ValueError("A list of phrases expected when adding patterns")
-            self.following_negations.extend(following_negations)
-        if termination:
-            if not isinstance(termination, list):
-                raise ValueError("A list of phrases expected when adding patterns")
-            self.termination.extend(termination)
-        self.build_patterns()
+    # def add_patterns(
+    #     self,
+    #     pseudo_negations=None,
+    #     preceding_negations=None,
+    #     following_negations=None,
+    #     termination=None,
+    # ):
+    #     if pseudo_negations:
+    #         if not isinstance(pseudo_negations, list):
+    #             raise ValueError("A list of phrases expected when adding patterns")
+    #         self.pseudo_negations.extend(pseudo_negations)
+    #     if preceding_negations:
+    #         if not isinstance(preceding_negations, list):
+    #             raise ValueError("A list of phrases expected when adding patterns")
+    #         self.preceding_negations.extend(preceding_negations)
+    #     if following_negations:
+    #         if not isinstance(following_negations, list):
+    #             raise ValueError("A list of phrases expected when adding patterns")
+    #         self.following_negations.extend(following_negations)
+    #     if termination:
+    #         if not isinstance(termination, list):
+    #             raise ValueError("A list of phrases expected when adding patterns")
+    #         self.termination.extend(termination)
+    #     self.build_patterns()
 
-    def get_patterns(self):
-        """
-        returns phrase patterns used for various negation dictionaries
+    # def get_patterns(self):
+    #     """
+    #     returns phrase patterns used for various negation dictionaries
 
-        Returns
-        -------
-        patterns: dict
-            pattern_type: [patterns]
+    #     Returns
+    #     -------
+    #     patterns: dict
+    #         pattern_type: [patterns]
 
-        """
-        patterns = {
-            "pseudo_patterns": self.pseudo_patterns,
-            "preceding_patterns": self.preceding_patterns,
-            "following_patterns": self.following_patterns,
-            "termination_patterns": self.termination_patterns,
-        }
-        for pattern in patterns:
-            logging.info(pattern)
-        return patterns
+    #     """
+    #     patterns = {
+    #         "pseudo_patterns": self.pseudo_patterns,
+    #         "preceding_patterns": self.preceding_patterns,
+    #         "following_patterns": self.following_patterns,
+    #         "termination_patterns": self.termination_patterns,
+    #     }
+    #     for pattern in patterns:
+    #         logging.info(pattern)
+    #     return patterns
 
     def process_negations(self, doc):
         """

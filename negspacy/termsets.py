@@ -202,3 +202,25 @@ en_clinical_sensitive["following_negations"] = following_clinical
 en_clinical_sensitive["termination"] = termination_clinical
 
 LANGUAGES["en_clinical_sensitive"] = en_clinical_sensitive
+
+class termset:
+    def __init__(self, termset_lang):
+        self.pattern_types = ["pseudo_negations", "preceding_negations", "following_negations", "termination"]
+        self.terms = LANGUAGES[termset_lang]
+
+    def get_patterns(self):
+        return self.terms
+
+    def remove_patterns(self, pattern_dict):
+        for key, value in pattern_dict.items():
+            if key in self.pattern_types:
+                self.terms[key] = [i for i in self.terms[key] if i not in value]
+            else:
+                raise ValueError(f"Unexpected key: {key} not in {self.pattern_types}")
+
+    def add_patterns(self, pattern_dict):
+        for key, value in pattern_dict.items():
+            if key in self.pattern_types:
+                self.terms[key] = list(set(self.terms[key] + value))
+            else:
+                raise ValueError(f"Unexpected key: {key} not in {self.pattern_types}")

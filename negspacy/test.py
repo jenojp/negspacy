@@ -1,6 +1,7 @@
 import pytest
 import spacy
 from negation import Negex
+from termsets import termset
 from spacy.pipeline import EntityRuler
 
 
@@ -78,7 +79,6 @@ def build_med_docs():
 
 def test():
     nlp = spacy.load("en_core_web_sm")
-    negex = Negex(nlp)
     nlp.add_pipe("negex", last=True)
     docs = build_docs()
     for d in docs:
@@ -90,8 +90,8 @@ def test():
 
 def test_en():
     nlp = spacy.load("en_core_web_sm")
-    negex = Negex(nlp, language="en")
-    nlp.add_pipe("negex", last=True)
+    ts = termset("en")
+    nlp.add_pipe("negex", config={"termset":ts.get_patterns()},last=True)
     docs = build_docs()
     for d in docs:
         doc = nlp(d[0])
