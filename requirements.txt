@@ -1,2 +1,2 @@
-spacy
+spacy<3.0
 pytest
