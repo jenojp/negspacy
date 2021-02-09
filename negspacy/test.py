@@ -91,7 +91,7 @@ def test():
 def test_en():
     nlp = spacy.load("en_core_web_sm")
     ts = termset("en")
-    nlp.add_pipe("negex", config={"termset":ts.get_patterns()},last=True)
+    nlp.add_pipe("negex", config={"neg_termset":ts.get_patterns()},last=True)
     docs = build_docs()
     for d in docs:
         doc = nlp(d[0])
@@ -99,7 +99,7 @@ def test_en():
             print(e.text, e._.negex)
             assert (e.text, e._.negex) == d[1][i]
 
-
+#blocked until scispacy release for spacy 3.0
 def __test_umls():
     nlp = spacy.load("en_core_sci_sm")
     negex = Negex(
@@ -139,8 +139,7 @@ def __test_umls2():
 
 def test_own_terminology():
     nlp = spacy.load("en_core_web_sm")
-    negex = Negex(nlp, termination=["whatever"])
-    nlp.add_pipe("negex", last=True)
+    nlp.add_pipe("negex", config={"neg_termset":{"pseudo_negations":[""],"preceding_negations":["not"],"following_negations":[],"termination":["whatever"]}}, last=True)
     doc = nlp("He does not like Steve Jobs whatever he says about Barack Obama.")
     assert doc.ents[1]._.negex == False
 
@@ -155,7 +154,6 @@ def test_get_patterns():
 
 def test_issue7():
     nlp = spacy.load("en_core_web_sm")
-    negex = Negex(nlp)
     nlp.add_pipe("negex", last=True)
     ruler = EntityRuler(nlp)
     patterns = [{"label": "SOFTWARE", "pattern": "spacy"}]
