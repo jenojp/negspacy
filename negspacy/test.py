@@ -99,13 +99,15 @@ def test_en():
             print(e.text, e._.negex)
             assert (e.text, e._.negex) == d[1][i]
 
-#blocked until scispacy release for spacy 3.0
-def __test_umls():
+
+def test_umls():
     nlp = spacy.load("en_core_sci_sm")
-    negex = Negex(
-        nlp, language="en_clinical", ent_types=["ENTITY"], chunk_prefix=["no"]
-    )
-    nlp.add_pipe("negex", last=True)
+    ts = termset("en_clinical")
+    nlp.add_pipe("negex", config={"neg_termset":ts.get_patterns(), "ent_types":["ENTITY"], "chunk_prefix":["no"]},last=True)
+    # negex = Negex(
+    #     nlp, language="en_clinical", ent_types=["ENTITY"], chunk_prefix=["no"]
+    # )
+    # nlp.add_pipe("negex", last=True)
     docs = build_med_docs()
     for d in docs:
         doc = nlp(d[0])

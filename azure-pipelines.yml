@@ -55,8 +55,8 @@ steps:
     python -m pip install -U setuptools
     pip install -r requirements.txt
     python -m spacy download en_core_web_sm
-    # pip install scispacy
-    # pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.3.0/en_core_sci_sm-0.3.0.tar.gz
+    pip install scispacy
+    pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz
   displayName: 'Install dependencies'
 
 - script: |
