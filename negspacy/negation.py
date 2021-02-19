@@ -4,11 +4,20 @@ from spacy.matcher import PhraseMatcher
 import logging
 
 from negspacy.termsets import termset
+
 default_ts = termset("en_clinical").get_patterns()
 
 # def create_negex_component(nlp: Language, name: str, termset_lang: str, ent_types: list, extension_name: str, pseudo_negations: list, preceding_negations: list, following_negations: list, termination: list, chunk_prefix: list):
 #     return Negex(nlp, termset_lang, ent_types, extension_name, pseudo_negations, preceding_negations, following_negations, termination, chunk_prefix)
-@Language.factory("negex", default_config={"neg_termset":default_ts, "ent_types":list(), "extension_name":"negex", "chunk_prefix":list()})
+@Language.factory(
+    "negex",
+    default_config={
+        "neg_termset": default_ts,
+        "ent_types": list(),
+        "extension_name": "negex",
+        "chunk_prefix": list(),
+    },
+)
 class Negex:
     """
         A spaCy pipeline component which identifies negated tokens in text.
@@ -57,10 +66,17 @@ class Negex:
             Span.set_extension(extension_name, default=False, force=True)
 
         ts = neg_termset
-        expected_keys = ["pseudo_negations","preceding_negations","following_negations","termination"]
+        expected_keys = [
+            "pseudo_negations",
+            "preceding_negations",
+            "following_negations",
+            "termination",
+        ]
         if not set(ts.keys()) == set(expected_keys):
-            raise KeyError(f"Unexpected or missing keys in 'neg_termset', expected: {expected_keys}, instead got: {list(ts.keys())}")
-        
+            raise KeyError(
+                f"Unexpected or missing keys in 'neg_termset', expected: {expected_keys}, instead got: {list(ts.keys())}"
+            )
+
         self.pseudo_negations = ts["pseudo_negations"]
         self.preceding_negations = ts["preceding_negations"]
         self.following_negations = ts["following_negations"]

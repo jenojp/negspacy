@@ -23,8 +23,6 @@ pseudo = [
     "no definite change",
     "not extend",
     "not cause",
-    "not certain if",
-    "not certain whether",
 ]
 en["pseudo_negations"] = pseudo
 
@@ -93,7 +91,6 @@ termination = [
     "though",
     "which",
     "yet",
-    "still",
 ]
 en["termination"] = termination
 
@@ -203,9 +200,15 @@ en_clinical_sensitive["termination"] = termination_clinical
 
 LANGUAGES["en_clinical_sensitive"] = en_clinical_sensitive
 
+
 class termset:
     def __init__(self, termset_lang):
-        self.pattern_types = ["pseudo_negations", "preceding_negations", "following_negations", "termination"]
+        self.pattern_types = [
+            "pseudo_negations",
+            "preceding_negations",
+            "following_negations",
+            "termination",
+        ]
         self.terms = LANGUAGES[termset_lang]
 
     def get_patterns(self):
