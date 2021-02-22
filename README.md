@@ -69,7 +69,7 @@ Designate termset to use, `en_clinical` is used by default.
 
 To set:
 ```python
-from negspacy.negation import negex
+from negspacy.negation import Negex
 from negspacy.termsets import termset
 
 ts = termset("en")
