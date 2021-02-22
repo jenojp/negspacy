@@ -1,4 +1,3 @@
-spaCy 3.0 support coming soon
 
 <p align="center"><img width="40%" src="docs/icon.png" /></p>
 
@@ -12,6 +11,11 @@ spaCy pipeline object for negating concepts in text. Based on the NegEx algorith
 ***NegEx - A Simple Algorithm for Identifying Negated Findings and Diseases in Discharge Summaries
 Chapman, Bridewell, Hanbury, Cooper, Buchanan***
 [https://doi.org/10.1006/jbin.2001.1029](https://doi.org/10.1006/jbin.2001.1029)
+
+## What's new
+Version 1.0 is a major version update providing support for spaCy 3.0's new interface for adding pipeline components. As a result, it is not backwards compatible with previous versions of negspacy.
+
+If your project uses spaCy 2.3.5 or earlier, you will need to use version 0.1.9. See [archived readme](https://github.com/jenojp/negspacy/blob/v0.1.9_spacy_2.3.5/README.md).
 
 ## Installation and usage
 Install the library.
@@ -29,7 +33,8 @@ Load spacy language model. Add negspacy pipeline object. Filtering on entity typ
 ```python
 nlp = spacy.load("en_core_web_sm")
 negex = Negex(nlp, ent_types=["PERSON","ORG"])
-nlp.add_pipe(negex, last=True)
+nlp.add_pipe("negex", config={"ent_types":["PERSON","ORG"]})
+
 ```
 
 View negations.
@@ -58,11 +63,26 @@ Consider pairing with [scispacy](https://allenai.github.io/scispacy/) to find UM
 
 Designate termset to use, `en_clinical` is used by default.
 
-`negex = Negex(nlp, language = "en_clinical")`
-
 * `en` = phrases for general english language text
 * `en_clinical` **DEFAULT** = adds phrases specific to clinical domain to general english
 * `en_clinical_sensitive` = adds additional phrases to help rule out historical and possibly irrelevant entities
+
+To set:
+```python
+from negspacy.negation import negex
+from negspacy.termsets import termset
+
+ts = termset("en")
+
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe(
+    "negex",
+    config={
+        "neg_tersmset":ts.get_patterns()
+    }
+)
+
+```
 
 ## Additional Functionality
 
@@ -71,35 +91,51 @@ Designate termset to use, `en_clinical` is used by default.
 Replace all patterns with your own set
 ```python
 nlp = spacy.load("en_core_web_sm")
-negex = Negex(nlp, termination=["but", "however", "nevertheless", "except"])
-```
-
-Add and remove individual patterns on the fly
-```python
-negex.add_patterns(
-    pseudo_negations=["my favorite pattern"],
-    termination=["these are", "great patterns"],
-    preceding_negations=["more patterns"],
-    following_negations=["even more patterns"],
-)
-negex.remove_patterns(
-    pseudo_negations=["my favorite pattern"],
-    termination=["these are", "great patterns"],
-    preceding_negations="denied",
-    following_negations=["unlikely"],
+nlp.add_pipe(
+    "negex", 
+    config={
+        "neg_termset":{
+            "pseudo_negations": ["might not"],
+            "preceding_negations": ["not"],
+            "following_negations":["declined"],
+            "termination": ["but","however"]
+        }
+    }
     )
 ```
-Note: A list is required when adding any amount of patterns but only required when removing multiple patterns. 
+
+Add and remove individual patterns on the fly from built-in termsets
+```python
+from negspacy.termsets import termset
+ts = termset("en")
+ts.add_patterns({
+            "pseudo_negations": ["my favorite pattern"],
+            "termination": ["these are", "great patterns", "but"],
+            "preceding_negations": ["wow a negation"],
+            "following_negations": ["extra negation"],
+        })
+#OR
+ts.remove_patterns(
+        {
+            "termination": ["these are", "great patterns"],
+            "pseudo_negations": ["my favorite pattern"],
+            "preceding_negations": ["denied", "wow a negation"],
+            "following_negations": ["unlikely", "extra negation"],
+        }
+    )
+```
 
 View patterns in use
 ```python
-patterns_dict = negex.get_patterns
+from negspacy.termsets import termset
+ts = termset("en_clinical")
+print(ts.get_patterns())
 ```
 
 
 ### Negations in noun chunks
 
-Depending on the Named Entity Recognition model you are using, you may have negations "chunked together" with nouns. For example when using scispacy:
+Depending on the Named Entity Recognition model you are using, you _may_ have negations "chunked together" with nouns. For example:
 ```python
 nlp = spacy.load("en_core_sci_sm")
 doc = nlp("There is no headache.")
@@ -112,8 +148,14 @@ This would cause the Negex algorithm to miss the preceding negation. To account 
 
 ```python
 nlp = spacy.load("en_core_sci_sm")
-negex = Negex(nlp, language = "en_clinical", chunk_prefix = ["no"])
-nlp.add_pipe(negex)
+ts = termset("en_clinical")
+nlp.add_pipe(
+    "negex",
+    config={
+        "chunk_prefix": ["no"],
+    },
+    last=True,
+)
 doc = nlp("There is no headache.")
 for e in doc.ents:
     print(e.text, e._.negex)
