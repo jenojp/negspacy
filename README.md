@@ -32,7 +32,6 @@ from negspacy.negation import Negex
 Load spacy language model. Add negspacy pipeline object. Filtering on entity types is optional.
 ```python
 nlp = spacy.load("en_core_web_sm")
-negex = Negex(nlp, ent_types=["PERSON","ORG"])
 nlp.add_pipe("negex", config={"ent_types":["PERSON","ORG"]})
 
 ```
