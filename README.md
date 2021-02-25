@@ -77,7 +77,7 @@ nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe(
     "negex",
     config={
-        "neg_tersmset":ts.get_patterns()
+        "neg_termset":ts.get_patterns()
     }
 )
 
