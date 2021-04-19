@@ -53,7 +53,7 @@ Consider pairing with [scispacy](https://allenai.github.io/scispacy/) to find UM
 
 ## NegEx Patterns
 
-* **psuedo_negations** - phrases that are false triggers, ambiguous negations, or double negatives
+* **pseudo_negations** - phrases that are false triggers, ambiguous negations, or double negatives
 * **preceding_negations** - negation phrases that precede an entity
 * **following_negations** - negation phrases that follow an entity
 * **termination** - phrases that cut a sentence in parts, for purposes of negation detection (.e.g., "but")
