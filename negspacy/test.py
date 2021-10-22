@@ -1,7 +1,7 @@
 import pytest
 import spacy
 import copy
-from negation import Negex
+import negation
 from termsets import termset
 from spacy.pipeline import EntityRuler
 
