@@ -13,22 +13,22 @@ trigger:
 strategy:
   matrix:
     Python36Linux:
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-18.04'
       python.version: '3.6'
     Python37Linux:
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-18.04'
       python.version: '3.7'
     Python38Linux:
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-18.04'
       python.version: '3.8'
     Python36Mac:
-      imageName: 'macos-10.14'
+      imageName: 'macos-10.15'
       python.version: '3.6'
     Python37Mac:
-      imageName: 'macos-10.14'
+      imageName: 'macos-10.15'
       python.version: '3.7'
     Python38Mac:
-      imageName: 'macos-10.14'
+      imageName: 'macos-10.15'
       python.version: '3.8'
     Python36Windows:
       imageName: 'vs2017-win2016'
@@ -55,8 +55,6 @@ steps:
     python -m pip install -U setuptools
     pip install -r requirements.txt
     python -m spacy download en_core_web_sm
-    pip install scispacy
-    pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz
   displayName: 'Install dependencies'
 
 - script: |
@@ -77,3 +75,13 @@ steps:
     cd negspacy
     python -m pytest test.py
   displayName: 'pytest'
+
+- script: |
+    pip install scispacy
+    pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz
+  displayName: 'Install dependencies, scispacy'
+
+  - script: |
+    cd negspacy
+    python -m pytest test_scispacy_dep.py
+  displayName: 'pytest, scispacy'
