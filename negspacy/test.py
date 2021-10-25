@@ -1,7 +1,7 @@
 import pytest
 import spacy
 import copy
-from negation import Negex
+import negation
 from termsets import termset
 from spacy.pipeline import EntityRuler
 
@@ -32,51 +32,6 @@ def build_docs():
     return docs
 
 
-def build_med_docs():
-    docs = list()
-    docs.append(
-        (
-            "Patient denies cardiovascular disease but has headaches. No history of smoking. Alcoholism unlikely. Smoking not ruled out.",
-            [
-                ("Patient denies", False),
-                ("cardiovascular disease", True),
-                ("smoking", True),
-                ("Alcoholism", True),
-                ("unlikely", False),
-                ("Smoking", False),
-            ],
-        )
-    )
-    docs.append(
-        (
-            "No history of headaches, prbc, smoking, acid reflux, or GERD.",
-            [
-                ("No history", True),
-                ("headaches", True),
-                ("prbc", True),
-                ("smoking", True),
-                ("acid reflux", True),
-                ("GERD", True),
-            ],
-        )
-    )
-
-    docs.append(
-        (
-            "Alcoholism was not the cause of liver disease.",
-            [("Alcoholism", True), ("liver disease", False)],
-        )
-    )
-
-    # docs.append(
-    #     (
-    #         "There was no headache for this patient.",
-    #         [("no headache", True), ("patient", True)],
-    #     )
-    # )
-    return docs
-
-
 def test():
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe("negex", last=True)
@@ -98,64 +53,6 @@ def test_en():
         for i, e in enumerate(doc.ents):
             print(e.text, e._.negex)
             assert (e.text, e._.negex) == d[1][i]
-
-
-def test_umls():
-    nlp = spacy.load("en_core_sci_sm")
-    ts = termset("en_clinical")
-    nlp.add_pipe(
-        "negex",
-        config={
-            "neg_termset": ts.get_patterns(),
-            "ent_types": ["ENTITY"],
-            "chunk_prefix": ["no"],
-        },
-        last=True,
-    )
-    # negex = Negex(
-    #     nlp, language="en_clinical", ent_types=["ENTITY"], chunk_prefix=["no"]
-    # )
-    # nlp.add_pipe("negex", last=True)
-    docs = build_med_docs()
-    for d in docs:
-        doc = nlp(d[0])
-        print(doc.ents)
-        for i, e in enumerate(doc.ents):
-            print(e.text, e._.negex)
-            assert (e.text, e._.negex) == d[1][i]
-
-
-def __test_umls2():
-    nlp = spacy.load("en_core_sci_sm")
-    # negex = Negex(
-    #     nlp, language="en_clinical_sensitive", ent_types=["ENTITY"], chunk_prefix=["no"]
-    # )
-    # nlp.add_pipe("negex", last=True)
-    ts = termset("en_clinical")
-    nlp.add_pipe(
-        "negex",
-        config={
-            "neg_termset": ts.get_patterns(),
-            "ent_types": ["ENTITY"],
-            "chunk_prefix": ["no"],
-        },
-        last=True,
-    )
-    docs = build_med_docs()
-    for d in docs:
-        doc = nlp(d[0])
-        for i, e in enumerate(doc.ents):
-            print(e.text, e._.negex)
-            assert (e.text, e._.negex) == d[1][i]
-
-
-# blocked by spacy 2.1.8 issue. Adding back after spacy 2.2.
-# def test_no_ner():
-#     nlp = spacy.load("en_core_web_sm", disable=["ner"])
-#     negex = Negex(nlp)
-#     nlp.add_pipe(negex, last=True)
-#     with pytest.raises(ValueError):
-#         doc = nlp("this doc has not been NERed")
 
 
 def test_own_terminology():
@@ -239,55 +136,11 @@ def test_add_remove_patterns():
     assert len(patterns_after["pseudo_negations"]) == len(patterns["pseudo_negations"])
 
 
-def test_issue_14():
-    nlp = spacy.load("en_core_sci_sm")
-    # negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "cancer free"])
-    # negex.remove_patterns(following_negations="free")
-    ts = termset("en_clinical")
-    ts.remove_patterns({"following_negations": ["free"]})
-    print(ts.get_patterns())
-    nlp.add_pipe(
-        "negex",
-        config={
-            "neg_termset": ts.get_patterns(),
-            "chunk_prefix": ["no", "cancer free"],
-        },
-        last=True,
-    )
-
-    doc = nlp("The patient has a cancer free diagnosis")
-    expected = [False, True]
-    for i, e in enumerate(doc.ents):
-        print(e.text, e._.negex)
-        assert e._.negex == expected[i]
-
-    nlp.remove_pipe("negex")
-    # negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "free"])
-    # nlp.add_pipe("negex", last=True)
-    ts = termset("en_clinical")
-    nlp.add_pipe(
-        "negex",
-        config={
-            "neg_termset": ts.get_patterns(),
-            "chunk_prefix": ["no", "free"],
-        },
-        last=True,
-    )
-    doc = nlp("The patient has a cancer free diagnosis")
-    expected = [False, False]
-    for i, e in enumerate(doc.ents):
-        print(e.text, e._.negex)
-        assert e._.negex == expected[i]
-
-
 if __name__ == "__main__":
     test()
-    test_umls()
-    test_umls2()
     test_en()
     test_bad_beharor()
     test_own_terminology()
     test_get_patterns()
     test_issue7()
     test_add_remove_patterns()
-    test_issue_14()
