@@ -10,8 +10,14 @@ def build_docs():
     docs = list()
     docs.append(
         (
-            "Patient denies Apple Computers but has Steve Jobs. He likes USA.",
-            [("Apple Computers", True), ("Steve Jobs", False), ("USA", False)],
+            "She does not like Steve Jobs but likes Apple products.",
+            [("Steve Jobs", True), ("Apple", False)],
+        )
+    )
+    docs.append(
+        (
+            "Patient denies December 31, 2020 but has January 1, 2021. He likes USA.",
+            [("December 31, 2020", True), ("January 1, 2021", False), ("USA", False)],
         )
     )
     docs.append(
