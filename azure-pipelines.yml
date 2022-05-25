@@ -12,34 +12,34 @@ trigger:
 
 strategy:
   matrix:
-    Python36Linux:
-      imageName: 'ubuntu-18.04'
-      python.version: '3.6'
     Python37Linux:
-      imageName: 'ubuntu-18.04'
+      imageName: 'ubuntu-20.04'
       python.version: '3.7'
     Python38Linux:
-      imageName: 'ubuntu-18.04'
+      imageName: 'ubuntu-20.04'
       python.version: '3.8'
-    Python36Mac:
-      imageName: 'macos-10.15'
-      python.version: '3.6'
+    Python39Linux:
+      imageName: 'ubuntu-20.04'
+      python.version: '3.9'
     Python37Mac:
-      imageName: 'macos-10.15'
+      imageName: 'macos-11'
       python.version: '3.7'
     Python38Mac:
-      imageName: 'macos-10.15'
+      imageName: 'macos-11'
       python.version: '3.8'
-    Python36Windows:
-      imageName: 'vs2017-win2016'
-      python.version: '3.6'
+    Python39Mac:
+      imageName: 'macos-11'
+      python.version: '3.9'
     Python37Windows:
-      imageName: 'vs2017-win2016'
+      imageName: 'windows-2019'
       python.version: '3.7'
     Python38Windows:
-      imageName: 'vs2017-win2016'
+      imageName: 'windows-2019'
       python.version: '3.8'
-  maxParallel: 4
+    Python39Windows:
+      imageName: 'windows-2019'
+      python.version: '3.9'
+  maxParallel: 9
 
 pool:
   vmImage: $(imageName)
