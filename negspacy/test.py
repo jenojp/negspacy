@@ -172,7 +172,6 @@ def test_spans():
     nlp.add_pipe(
         "negex", last=True, config={"use_spans": True, "span_keys": ["ent_spans"]}
     )
-    doc = nlp("He does not like Steve Jobs whatever he says about Barack Obama.")
 
     docs = build_docs()
     for d in docs:
