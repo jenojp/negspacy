@@ -289,9 +289,9 @@ class Negex:
         return boundaries
 
     @staticmethod
-    def yield_spans_between_boundaries(doc, boundary, span_keys):
+    def yield_spans_within_boundary(doc, boundary, span_keys):
         """
-        Yield spans that start and end between boundaries
+        Yield spans that start and end within a boundary
         """
         start, end = boundary
         for span_key in span_keys:
@@ -334,7 +334,7 @@ class Negex:
                 return span
 
             if self.use_spans:
-                for span in self.yield_spans_between_boundaries(doc, b, self.span_keys):
+                for span in self.yield_spans_within_boundary(doc, b, self.span_keys):
                     span = process_span(span)
             else:
                 for e in doc[b[0] : b[1]].ents:
