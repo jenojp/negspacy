@@ -21,24 +21,21 @@ strategy:
     Python39Linux:
       imageName: 'ubuntu-20.04'
       python.version: '3.9'
-    Python37Mac:
-      imageName: 'macos-11'
-      python.version: '3.7'
-    Python38Mac:
-      imageName: 'macos-11'
-      python.version: '3.8'
+    Python310Linux:
+      imageName: 'ubuntu-20.04'
+      python.version: '3.10'
     Python39Mac:
       imageName: 'macos-11'
       python.version: '3.9'
-    Python37Windows:
-      imageName: 'windows-2019'
-      python.version: '3.7'
-    Python38Windows:
-      imageName: 'windows-2019'
-      python.version: '3.8'
+    Python310Mac:
+      imageName: 'macos-11'
+      python.version: '3.10'
     Python39Windows:
       imageName: 'windows-2019'
       python.version: '3.9'
+    Python310Windows:
+      imageName: 'windows-2019'
+      python.version: '3.10'
   maxParallel: 9
 
 pool:
@@ -78,7 +75,7 @@ steps:
 
 - script: |
     pip install scispacy
-    pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz
+    pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.3/en_core_sci_sm-0.5.3.tar.gz
   displayName: 'Install dependencies scispacy'
 
 - script: |
