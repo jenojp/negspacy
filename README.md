@@ -131,6 +131,29 @@ ts = termset("en_clinical")
 print(ts.get_patterns())
 ```
 
+### Negations with Spans
+
+Span Groups can be negated by providing a list of span keys to the `span_keys` argument.
+
+Load spacy language model that [adds spans](https://spacy.io/api/spancategorizer) to the Doc object.
+```python
+nlp = spacy.load("your_span_cat_model")
+# 'sc' is the default SpanGroup spans_key
+nlp.add_pipe("negex", config={"span_keys":["sc"]})
+```
+
+View negations.
+```python
+doc = nlp("Analysis showed no sign of Human TR Beta 1 mRNA")
+
+for span in doc.spans["sc"]:
+	print(span.text, span.label, span._.negex)
+```
+
+```console
+Human TR Beta 1 PROTEIN True
+Human TR Beta 1 mRNA RNA True
+```
 
 ### Negations in noun chunks
 
