@@ -170,7 +170,7 @@ def test_spans():
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe("ents_to_spans", last=True)
     nlp.add_pipe(
-        "negex", last=True, config={"use_spans": True, "span_keys": ["ent_spans"]}
+        "negex", last=True, config={"span_keys": ["ent_spans"]}
     )
 
     docs = build_docs()

@@ -17,8 +17,7 @@ default_ts = termset("en_clinical").get_patterns()
         "ent_types": list(),
         "extension_name": "negex",
         "chunk_prefix": list(),
-        "use_spans": False,
-        "span_keys": ["sc"],
+        "span_keys": list(),
     },
 )
 class Negex:
@@ -46,8 +45,6 @@ class Negex:
         negations that appear after an entity, if empty, defaults are used
     termination: list
         phrases that "terminate" a sentence for processing purposes such as "but". If empty, defaults are used
-    use_spans: bool
-        whether to use spans instead of entitiy extensions, defaults to False
     span_keys: list
         list of keys to use for spans, defaults to ["sc"]
 
@@ -61,7 +58,6 @@ class Negex:
         ent_types: list,
         extension_name: str,
         chunk_prefix: list,
-        use_spans: bool,
         span_keys: list,
     ):
         # if not termset_lang in LANGUAGES:
@@ -96,7 +92,6 @@ class Negex:
         self.extension_name = extension_name
         self.build_patterns()
         self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
-        self.use_spans = use_spans
         self.span_keys = span_keys
 
     def build_patterns(self):
@@ -333,7 +328,7 @@ class Negex:
                         span._.set(self.extension_name, True)
                 return span
 
-            if self.use_spans:
+            if self.span_keys:
                 for span in self.yield_spans_within_boundary(doc, b, self.span_keys):
                     span = process_span(span)
             else:
