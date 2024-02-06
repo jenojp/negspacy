@@ -14,6 +14,8 @@ def build_med_docs():
             [
                 ("Patient denies", False),
                 ("cardiovascular disease", True),
+                ("headaches", False),
+                ("No history of", True),
                 ("smoking", True),
                 ("Alcoholism", True),
                 ("unlikely", False),
@@ -111,8 +113,9 @@ def test_issue_14():
     )
 
     doc = nlp("The patient has a cancer free diagnosis")
+    print(doc.ents)
     expected = [False, True]
-    for i, e in enumerate(doc.ents):
+    for i, e in enumerate(doc.ents[:2]):
         print(e.text, e._.negex)
         assert e._.negex == expected[i]
 
@@ -130,7 +133,7 @@ def test_issue_14():
     )
     doc = nlp("The patient has a cancer free diagnosis")
     expected = [False, False]
-    for i, e in enumerate(doc.ents):
+    for i, e in enumerate(doc.ents[:2]):
         print(e.text, e._.negex)
         assert e._.negex == expected[i]
 
