@@ -7,6 +7,7 @@ from negspacy.termsets import termset
 
 default_ts = termset("en_clinical").get_patterns()
 
+
 # def create_negex_component(nlp: Language, name: str, termset_lang: str, ent_types: list, extension_name: str, pseudo_negations: list, preceding_negations: list, following_negations: list, termination: list, chunk_prefix: list):
 #     return Negex(nlp, termset_lang, ent_types, extension_name, pseudo_negations, preceding_negations, following_negations, termination, chunk_prefix)
 @Language.factory(
@@ -16,6 +17,7 @@ default_ts = termset("en_clinical").get_patterns()
         "ent_types": list(),
         "extension_name": "negex",
         "chunk_prefix": list(),
+        "span_keys": list(),
     },
 )
 class Negex:
@@ -34,7 +36,7 @@ class Negex:
     termset_lang: str
         language code, if using default termsets (e.g. "en" for english)
     extension_name: str
-        defaults to "negex"; whether entity is negated is then available as ent._.negex
+        defaults to "negex"; whether entity is negated is then available as ent._.negex or span._.negex
     pseudo_negations: list
         list of phrases that cancel out a negation, if empty, defaults are used
     preceding_negations: list
@@ -43,6 +45,8 @@ class Negex:
         negations that appear after an entity, if empty, defaults are used
     termination: list
         phrases that "terminate" a sentence for processing purposes such as "but". If empty, defaults are used
+    span_keys: list
+        list of keys to use for spans, defaults to ["sc"]
 
     """
 
@@ -54,6 +58,7 @@ class Negex:
         ent_types: list,
         extension_name: str,
         chunk_prefix: list,
+        span_keys: list,
     ):
         # if not termset_lang in LANGUAGES:
         #     raise KeyError(
@@ -87,6 +92,7 @@ class Negex:
         self.extension_name = extension_name
         self.build_patterns()
         self.chunk_prefix = list(nlp.tokenizer.pipe(chunk_prefix))
+        self.span_keys = span_keys
 
     def build_patterns(self):
         # efficiently build spaCy matcher patterns
@@ -277,6 +283,17 @@ class Negex:
             index = start
         return boundaries
 
+    @staticmethod
+    def yield_spans_within_boundary(doc, boundary, span_keys):
+        """
+        Yield spans that start and end within a boundary
+        """
+        start, end = boundary
+        for span_key in span_keys:
+            for span in doc.spans[span_key]:
+                if start <= span.start < end and start < span.end <= end:
+                    yield span
+
     def negex(self, doc):
         """
         Negates entities of interest
@@ -293,22 +310,30 @@ class Negex:
             sub_preceding = [i for i in preceding if b[0] <= i[1] < b[1]]
             sub_following = [i for i in following if b[0] <= i[1] < b[1]]
 
-            for e in doc[b[0] : b[1]].ents:
+            def process_span(span):
                 if self.ent_types:
-                    if e.label_ not in self.ent_types:
-                        continue
-                if any(pre < e.start for pre in [i[1] for i in sub_preceding]):
-                    e._.set(self.extension_name, True)
-                    continue
-                if any(fol > e.end for fol in [i[2] for i in sub_following]):
-                    e._.set(self.extension_name, True)
-                    continue
+                    if span.label_ not in self.ent_types:
+                        return
+                if any(pre < span.start for pre in [i[1] for i in sub_preceding]):
+                    span._.set(self.extension_name, True)
+                    return
+                if any(fol > span.end for fol in [i[2] for i in sub_following]):
+                    span._.set(self.extension_name, True)
+                    return
                 if self.chunk_prefix:
                     if any(
-                        e.text.lower().startswith(c.text.lower())
+                        span.text.lower().startswith(c.text.lower())
                         for c in self.chunk_prefix
                     ):
-                        e._.set(self.extension_name, True)
+                        span._.set(self.extension_name, True)
+                return span
+
+            if self.span_keys:
+                for span in self.yield_spans_within_boundary(doc, b, self.span_keys):
+                    span = process_span(span)
+            else:
+                for e in doc[b[0] : b[1]].ents:
+                    e = process_span(e)
         return doc
 
     def __call__(self, doc):

@@ -1,9 +1,10 @@
 import pytest
 import spacy
 import copy
-import negation
-from termsets import termset
+import negspacy.negation
+from negspacy.termsets import termset
 from spacy.pipeline import EntityRuler
+from spacy.language import Language
 
 
 def build_docs():
@@ -142,11 +143,49 @@ def test_add_remove_patterns():
     assert len(patterns_after["pseudo_negations"]) == len(patterns["pseudo_negations"])
 
 
+def ents_to_spans(doc):
+    """Converts entities to spans"""
+    spans = []
+    for ent in doc.ents:
+        span = doc.char_span(ent.start_char, ent.end_char, label=ent.label_)
+        if span:
+            spans.append(span)
+    doc.spans["ent_spans"] = spans
+    return doc
+
+
+@Language.component("ents_to_spans")
+def convert_ents_to_spans(doc):
+    """Convert the doc.ents to spans"""
+    new_spans = []
+    for ent in doc.ents:
+        temp_span = doc[ent.start : ent.end]
+        temp_span.label_ = ent.label_
+        new_spans.append(temp_span)
+    doc.spans["ent_spans"] = new_spans
+    return doc
+
+
+def test_spans():
+    nlp = spacy.load("en_core_web_sm")
+    nlp.add_pipe("ents_to_spans", last=True)
+    nlp.add_pipe(
+        "negex", last=True, config={"span_keys": ["ent_spans"]}
+    )
+
+    docs = build_docs()
+    for d in docs:
+        doc = nlp(d[0])
+        for i, e in enumerate(doc.spans["ent_spans"]):
+            print(e.text, e._.negex)
+            assert (e.text, e._.negex) == d[1][i]
+
+
 if __name__ == "__main__":
     test()
     test_en()
-    test_bad_beharor()
     test_own_terminology()
     test_get_patterns()
     test_issue7()
     test_add_remove_patterns()
+    test_spans()
