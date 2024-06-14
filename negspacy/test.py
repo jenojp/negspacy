@@ -169,9 +169,7 @@ def convert_ents_to_spans(doc):
 def test_spans():
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe("ents_to_spans", last=True)
-    nlp.add_pipe(
-        "negex", last=True, config={"span_keys": ["ent_spans"]}
-    )
+    nlp.add_pipe("negex", last=True, config={"span_keys": ["ent_spans"]})
 
     docs = build_docs()
     for d in docs:

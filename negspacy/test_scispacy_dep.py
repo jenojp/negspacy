@@ -16,7 +16,7 @@ def build_med_docs():
                 ("cardiovascular disease", True),
                 ("headaches", False),
                 ("No history of", True),
-                ("smoking", True),
+                # ("smoking", True),
                 ("Alcoholism", True),
                 ("unlikely", False),
                 ("Smoking", False),
