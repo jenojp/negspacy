@@ -91,7 +91,7 @@ Replace all patterns with your own set
 ```python
 nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe(
-    "negex", 
+    "negex",
     config={
         "neg_termset":{
             "pseudo_negations": ["might not"],
