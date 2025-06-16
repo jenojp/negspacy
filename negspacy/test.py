@@ -3,6 +3,7 @@ import copy
 from negspacy.termsets import termset
 from spacy.pipeline import EntityRuler
 from spacy.language import Language
+from negspacy.negation import Negex  # noqa: F401
 
 
 def build_docs():
