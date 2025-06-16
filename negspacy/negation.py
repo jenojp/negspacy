@@ -115,7 +115,11 @@ class Negex:
         self.termination_patterns = list(self.nlp.tokenizer.pipe(self.termination))
         self.matcher.add("Termination", None, *self.termination_patterns)
 
-    def process_negations(self, doc) -> Tuple[List[Tuple[int, int, int]], List[Tuple[int, int, int]], List[Tuple[int, int, int]]]:
+    def process_negations(self, doc) -> Tuple[
+        List[Tuple[int, int, int]],
+        List[Tuple[int, int, int]],
+        List[Tuple[int, int, int]],
+    ]:
         """
         Find negations in doc and clean candidate negations to remove pseudo negations
 
@@ -168,7 +172,9 @@ class Negex:
                     )
         return preceding, following, terminating
 
-    def termination_boundaries(self, doc, terminating: List[Tuple[int, int, int]]) -> List[Tuple[int, int]]:
+    def termination_boundaries(
+        self, doc, terminating: List[Tuple[int, int, int]]
+    ) -> List[Tuple[int, int]]:
         """
         Create sub sentences based on terminations found in text.
 
@@ -198,7 +204,9 @@ class Negex:
         return boundaries
 
     @staticmethod
-    def yield_spans_within_boundary(doc, boundary: Tuple[int, int], span_keys: Set[str]):
+    def yield_spans_within_boundary(
+        doc, boundary: Tuple[int, int], span_keys: Set[str]
+    ):
         """
         Yield spans that start and end within a boundary
         """
@@ -243,10 +251,12 @@ class Negex:
                 return span
 
             if self.span_keys:
-                for span in self.yield_spans_within_boundary(doc, boundary, self.span_keys):
+                for span in self.yield_spans_within_boundary(
+                    doc, boundary, self.span_keys
+                ):
                     process_span(span)
             else:
-                for e in doc[boundary[0]: boundary[1]].ents:
+                for e in doc[boundary[0] : boundary[1]].ents:
                     process_span(e)
         return doc
 

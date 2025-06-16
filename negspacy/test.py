@@ -1,13 +1,15 @@
-import pytest
 import spacy
 import copy
-import negspacy.negation
 from negspacy.termsets import termset
 from spacy.pipeline import EntityRuler
 from spacy.language import Language
 
 
 def build_docs():
+    """
+    Builds a list of tuples with text and expected negation results.
+    Each tuple contains a string and a list of tuples with entity text and its negation status.
+    """
     docs = list()
     docs.append(
         (
@@ -40,6 +42,9 @@ def build_docs():
 
 
 def test():
+    """
+    Test the negex component with the default English model.
+    """
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe("negex", last=True)
     docs = build_docs()
@@ -51,6 +56,9 @@ def test():
 
 
 def test_en():
+    """
+    Test the negex component with the English termset.
+    """
     nlp = spacy.load("en_core_web_sm")
     ts = termset("en")
     nlp.add_pipe("negex", config={"neg_termset": ts.get_patterns()}, last=True)
@@ -63,6 +71,9 @@ def test_en():
 
 
 def test_own_terminology():
+    """
+    Test the negex component with a custom termset.
+    """
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe(
         "negex",
@@ -77,28 +88,34 @@ def test_own_terminology():
         last=True,
     )
     doc = nlp("He does not like Steve Jobs whatever he says about Barack Obama.")
-    assert doc.ents[1]._.negex == False
+    assert not doc.ents[1]._.negex
 
 
 def test_issue7():
+    """
+    Test for issue #7 where the negex component was not working with EntityRuler."""
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe("negex", last=True)
-    ruler = EntityRuler(nlp)
-    patterns = [{"label": "SOFTWARE", "pattern": "spacy"}]
-    doc = nlp("fgfgdghgdh")
+    ruler = EntityRuler(nlp)  # noqa
+    patterns = [{"label": "SOFTWARE", "pattern": "spacy"}]  # noqa
+    doc = nlp("fgfgdghgdh")  # noqa
 
 
 def test_get_patterns():
+    """
+    Test the get_patterns method of the termset class."""
     # nlp = spacy.load("en_core_web_sm")
     # negex = Negex(nlp)
     # patterns = negex.get_patterns()
     ts = termset("en")
     patterns = ts.get_patterns()
-    assert type(patterns) == dict
+    assert isinstance(patterns, dict)
     assert len(patterns) == 4
 
 
 def test_add_remove_patterns():
+    """
+    Test adding and removing patterns in the termset."""
     ts = termset("en_clinical")
     patterns = copy.deepcopy(ts.get_patterns())
     ts.add_patterns(
@@ -167,6 +184,8 @@ def convert_ents_to_spans(doc):
 
 
 def test_spans():
+    """
+    Test the negex component with spans instead of entities."""
     nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe("ents_to_spans", last=True)
     nlp.add_pipe("negex", last=True, config={"span_keys": ["ent_spans"]})

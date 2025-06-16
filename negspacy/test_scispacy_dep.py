@@ -1,9 +1,5 @@
-import pytest
 import spacy
-import copy
-import negation
 from termsets import termset
-from spacy.pipeline import EntityRuler
 
 
 def build_med_docs():
@@ -140,5 +136,4 @@ def test_issue_14():
 
 if __name__ == "__main__":
     test_umls()
-    test_umls2()
     test_issue_14()
