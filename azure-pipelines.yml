@@ -1,42 +1,35 @@
 # Python package
-# Create and test a Python package on multiple Python versions.
-# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+# Modernized Azure Pipelines for 2025: test on latest Python, macOS, and Linux versions
+# See: https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 trigger:
   branches:
-      include:
+    include:
       - master
       - develop
       - releases/*
 
 strategy:
   matrix:
-    Python37Linux:
-      imageName: 'ubuntu-20.04'
-      python.version: '3.7'
-    Python38Linux:
-      imageName: 'ubuntu-20.04'
-      python.version: '3.8'
-    Python39Linux:
-      imageName: 'ubuntu-20.04'
-      python.version: '3.9'
-    Python310Linux:
-      imageName: 'ubuntu-20.04'
-      python.version: '3.10'
-    Python39Mac:
-      imageName: 'macos-11'
-      python.version: '3.9'
-    Python310Mac:
-      imageName: 'macos-11'
-      python.version: '3.10'
-    Python39Windows:
-      imageName: 'windows-2019'
-      python.version: '3.9'
-    Python310Windows:
-      imageName: 'windows-2019'
-      python.version: '3.10'
-  maxParallel: 9
+    Python311Linux:
+      imageName: 'ubuntu-22.04'
+      python.version: '3.11'
+    Python312Linux:
+      imageName: 'ubuntu-22.04'
+      python.version: '3.12'
+    Python311Mac:
+      imageName: 'macos-14'
+      python.version: '3.11'
+    Python312Mac:
+      imageName: 'macos-14'
+      python.version: '3.12'
+    Python311Windows:
+      imageName: 'windows-2022'
+      python.version: '3.11'
+    Python312Windows:
+      imageName: 'windows-2022'
+      python.version: '3.12'
+  maxParallel: 6
 
 pool:
   vmImage: $(imageName)
@@ -71,7 +64,7 @@ steps:
 - script: |
     cd negspacy
     python -m pytest test.py
-  displayName: 'pytest'
+  displayName: 'pytest (sdist)'
 
 - script: |
     pip install scispacy
@@ -81,4 +74,4 @@ steps:
 - script: |
     cd negspacy
     python -m pytest test_scispacy_dep.py
-  displayName: 'pytest'
+  displayName: 'pytest (scispacy)'
