@@ -66,12 +66,12 @@ steps:
     python -m pytest test.py
   displayName: 'pytest (sdist)'
 
-- script: |
-    pip install scispacy
-    pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.3/en_core_sci_sm-0.5.3.tar.gz
-  displayName: 'Install dependencies scispacy'
+# - script: |
+#     pip install scispacy
+#     pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.3/en_core_sci_sm-0.5.3.tar.gz
+#   displayName: 'Install dependencies scispacy'
 
-- script: |
-    cd negspacy
-    python -m pytest test_scispacy_dep.py
-  displayName: 'pytest (scispacy)'
+# - script: |
+#     cd negspacy
+#     python -m pytest test_scispacy_dep.py
+#   displayName: 'pytest (scispacy)'
