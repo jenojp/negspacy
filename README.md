@@ -1,10 +1,10 @@
 
-<p align="center"><img width="40%" src="docs/icon.png" /></p>
+<p align="center"><img width="40%" src="icon.png" /></p>
 
 
 # negspacy: negation for spaCy
 
-[![Build Status](https://dev.azure.com/jenopizzaro/negspacy/_apis/build/status/jenojp.negspacy?branchName=master)](https://dev.azure.com/jenopizzaro/negspacy/_build/latest?definitionId=2&branchName=master) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io) [![pypi Version](https://img.shields.io/pypi/v/negspacy.svg?style=flat-square)](https://pypi.org/project/negspacy/) [![DOI](https://zenodo.org/badge/201071164.svg)](https://zenodo.org/badge/latestdoi/201071164) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/ambv/black)
+[![Build Status](https://dev.azure.com/jenopizzaro/negspacy/_apis/build/status/jenojp.negspacy?branchName=master)](https://dev.azure.com/jenopizzaro/negspacy/_build/latest?definitionId=2&branchName=master) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io) [![pypi Version](https://img.shields.io/pypi/v/negspacy.svg?style=flat-square)](https://pypi.org/project/negspacy/) [![DOI](https://zenodo.org/badge/201071164.svg)](https://zenodo.org/badge/latestdoi/201071164) 
 
 spaCy pipeline object for negating concepts in text. Based on the NegEx algorithm.
 
@@ -91,7 +91,7 @@ Replace all patterns with your own set
 ```python
 nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe(
-    "negex", 
+    "negex",
     config={
         "neg_termset":{
             "pseudo_negations": ["might not"],
@@ -131,6 +131,29 @@ ts = termset("en_clinical")
 print(ts.get_patterns())
 ```
 
+### Negations with Spans
+
+Span Groups can be negated by providing a list of span keys to the `span_keys` argument.
+
+Load spacy language model that [adds spans](https://spacy.io/api/spancategorizer) to the Doc object.
+```python
+nlp = spacy.load("your_span_cat_model")
+# 'sc' is the default SpanGroup spans_key
+nlp.add_pipe("negex", config={"span_keys":["sc"]})
+```
+
+View negations.
+```python
+doc = nlp("Analysis showed no sign of Human TR Beta 1 mRNA")
+
+for span in doc.spans["sc"]:
+	print(span.text, span.label, span._.negex)
+```
+
+```console
+Human TR Beta 1 PROTEIN True
+Human TR Beta 1 mRNA RNA True
+```
 
 ### Negations in noun chunks
 
