@@ -49,6 +49,7 @@ addopts = "-ra --strict-markers --strict-config"
 [tool.ruff]
 line-length = 100
 target-version = "py39"
+extend-exclude = ["tests/_scispacy_dep.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]

@@ -1,7 +1,7 @@
+from spacy.language import Language
+
 import negspacy.negation  # noqa: F401
 from negspacy.termsets import termset
-from spacy.language import Language
-from spacy.pipeline import EntityRuler
 
 
 def build_docs():
@@ -71,14 +71,12 @@ def test_own_terminology(nlp):
         last=True,
     )
     doc = nlp("He does not like Steve Jobs whatever he says about Barack Obama.")
-    assert doc.ents[1]._.negex == False
+    assert not doc.ents[1]._.negex
 
 
 def test_issue7(nlp):
     nlp.add_pipe("negex", last=True)
-    ruler = EntityRuler(nlp)
-    patterns = [{"label": "SOFTWARE", "pattern": "spacy"}]
-    doc = nlp("fgfgdghgdh")
+    nlp("fgfgdghgdh")
 
 
 def ents_to_spans(doc):

@@ -4,7 +4,7 @@
 
 # negspacy: negation for spaCy
 
-[![Build Status](https://dev.azure.com/jenopizzaro/negspacy/_apis/build/status/jenojp.negspacy?branchName=master)](https://dev.azure.com/jenopizzaro/negspacy/_build/latest?definitionId=2&branchName=master) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io) [![pypi Version](https://img.shields.io/pypi/v/negspacy.svg?style=flat-square)](https://pypi.org/project/negspacy/) [![DOI](https://zenodo.org/badge/201071164.svg)](https://zenodo.org/badge/latestdoi/201071164) 
+[![Build Status](https://dev.azure.com/jenopizzaro/negspacy/_apis/build/status/jenojp.negspacy?branchName=master)](https://dev.azure.com/jenopizzaro/negspacy/_build/latest?definitionId=2&branchName=master) [![Built with spaCy](https://img.shields.io/badge/made%20with%20❤%20and-spaCy-09a3d5.svg)](https://spacy.io) [![pypi Version](https://img.shields.io/pypi/v/negspacy.svg?style=flat-square)](https://pypi.org/project/negspacy/) [![DOI](https://zenodo.org/badge/201071164.svg)](https://zenodo.org/badge/latestdoi/201071164)
 
 spaCy pipeline object for negating concepts in text. Based on the NegEx algorithm.
 
