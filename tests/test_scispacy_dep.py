@@ -1,12 +1,18 @@
+import pytest
+
+pytest.importorskip("scispacy")
+
 import spacy
-from termsets import termset
+
+from negspacy.termsets import termset
 
 
 def build_med_docs():
     docs = list()
     docs.append(
         (
-            "Patient denies cardiovascular disease but has headaches. No history of smoking. Alcoholism unlikely. Smoking not ruled out.",
+            "Patient denies cardiovascular disease but has headaches."
+            " No history of smoking. Alcoholism unlikely. Smoking not ruled out.",
             [
                 ("Patient denies", False),
                 ("cardiovascular disease", True),
@@ -55,10 +61,6 @@ def test_umls():
         },
         last=True,
     )
-    # negex = Negex(
-    #     nlp, language="en_clinical", ent_types=["ENTITY"], chunk_prefix=["no"]
-    # )
-    # nlp.add_pipe("negex", last=True)
     docs = build_med_docs()
     for d in docs:
         doc = nlp(d[0])
@@ -68,34 +70,8 @@ def test_umls():
             assert (e.text, e._.negex) == d[1][i]
 
 
-def __test_umls2():
-    nlp = spacy.load("en_core_sci_sm")
-    # negex = Negex(
-    #     nlp, language="en_clinical_sensitive", ent_types=["ENTITY"], chunk_prefix=["no"]
-    # )
-    # nlp.add_pipe("negex", last=True)
-    ts = termset("en_clinical")
-    nlp.add_pipe(
-        "negex",
-        config={
-            "neg_termset": ts.get_patterns(),
-            "ent_types": ["ENTITY"],
-            "chunk_prefix": ["no"],
-        },
-        last=True,
-    )
-    docs = build_med_docs()
-    for d in docs:
-        doc = nlp(d[0])
-        for i, e in enumerate(doc.ents):
-            print(e.text, e._.negex)
-            assert (e.text, e._.negex) == d[1][i]
-
-
 def test_issue_14():
     nlp = spacy.load("en_core_sci_sm")
-    # negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "cancer free"])
-    # negex.remove_patterns(following_negations="free")
     ts = termset("en_clinical")
     ts.remove_patterns({"following_negations": ["free"]})
     print(ts.get_patterns())
@@ -116,8 +92,6 @@ def test_issue_14():
         assert e._.negex == expected[i]
 
     nlp.remove_pipe("negex")
-    # negex = Negex(nlp, language="en_clinical", chunk_prefix=["no", "free"])
-    # nlp.add_pipe("negex", last=True)
     ts = termset("en_clinical")
     nlp.add_pipe(
         "negex",
@@ -132,9 +106,3 @@ def test_issue_14():
     for i, e in enumerate(doc.ents[:2]):
         print(e.text, e._.negex)
         assert e._.negex == expected[i]
-
-
-if __name__ == "__main__":
-    test_umls()
-    test_umls2()
-    test_issue_14()
