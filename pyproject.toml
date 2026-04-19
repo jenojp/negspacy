@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "A spaCy pipeline component for negating concepts in text (NegEx)."
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [{ name = "Jeno Pizarro", email = "jenopizzaro@gmail.com" }]
 keywords = ["nlp", "spacy", "negation", "clinical"]
 classifiers = [
@@ -18,7 +18,6 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -48,7 +47,7 @@ addopts = "-ra --strict-markers --strict-config"
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py310"
 extend-exclude = ["tests/_scispacy_dep.py"]
 
 [tool.ruff.lint]
