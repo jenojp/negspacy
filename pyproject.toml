@@ -1,3 +1,57 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "negspacy"
+dynamic = ["version"]
+description = "A spaCy pipeline component for negating concepts in text (NegEx)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [{ name = "Jeno Pizarro", email = "jenopizzaro@gmail.com" }]
+keywords = ["nlp", "spacy", "negation", "clinical"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering",
+  "Typing :: Typed",
+]
+dependencies = ["spacy>=3.8,<4.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov", "ruff", "pre-commit"]
+
+[project.urls]
+Homepage = "https://github.com/jenojp/negspacy"
+Issues   = "https://github.com/jenojp/negspacy/issues"
+
+[tool.hatch.version]
+path = "src/negspacy/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/negspacy"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.format]
+quote-style = "double"
