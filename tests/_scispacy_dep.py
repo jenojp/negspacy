@@ -1,9 +1,5 @@
-import pytest
 import spacy
-import copy
-import negation
 from termsets import termset
-from spacy.pipeline import EntityRuler
 
 
 def build_med_docs():

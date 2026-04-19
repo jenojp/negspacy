@@ -6,7 +6,7 @@ from negspacy.termsets import termset
 def test_get_patterns():
     ts = termset("en")
     patterns = ts.get_patterns()
-    assert type(patterns) == dict
+    assert isinstance(patterns, dict)
     assert len(patterns) == 4
 
 
@@ -23,16 +23,10 @@ def test_add_remove_patterns():
     )
     patterns_after = ts.get_patterns()
 
-    assert len(patterns_after["pseudo_negations"]) - 1 == len(
-        patterns["pseudo_negations"]
-    )
+    assert len(patterns_after["pseudo_negations"]) - 1 == len(patterns["pseudo_negations"])
     assert len(patterns_after["termination"]) - 2 == len(patterns["termination"])
-    assert len(patterns_after["preceding_negations"]) - 1 == len(
-        patterns["preceding_negations"]
-    )
-    assert len(patterns_after["following_negations"]) - 1 == len(
-        patterns["following_negations"]
-    )
+    assert len(patterns_after["preceding_negations"]) - 1 == len(patterns["preceding_negations"])
+    assert len(patterns_after["following_negations"]) - 1 == len(patterns["following_negations"])
 
     ts.remove_patterns(
         {
@@ -44,12 +38,6 @@ def test_add_remove_patterns():
     )
     patterns_after = ts.get_patterns()
     assert len(patterns_after["termination"]) == len(patterns["termination"])
-    assert (
-        len(patterns_after["following_negations"])
-        == len(patterns["following_negations"]) - 1
-    )
-    assert (
-        len(patterns_after["preceding_negations"])
-        == len(patterns["preceding_negations"]) - 1
-    )
+    assert len(patterns_after["following_negations"]) == len(patterns["following_negations"]) - 1
+    assert len(patterns_after["preceding_negations"]) == len(patterns["preceding_negations"]) - 1
     assert len(patterns_after["pseudo_negations"]) == len(patterns["pseudo_negations"])

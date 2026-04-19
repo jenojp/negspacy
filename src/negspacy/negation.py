@@ -107,14 +107,10 @@ class Negex:
         self.pseudo_patterns = list(self.nlp.tokenizer.pipe(self.pseudo_negations))
         self.matcher.add("pseudo", self.pseudo_patterns)
 
-        self.preceding_patterns = list(
-            self.nlp.tokenizer.pipe(self.preceding_negations)
-        )
+        self.preceding_patterns = list(self.nlp.tokenizer.pipe(self.preceding_negations))
         self.matcher.add("Preceding", self.preceding_patterns)
 
-        self.following_patterns = list(
-            self.nlp.tokenizer.pipe(self.following_negations)
-        )
+        self.following_patterns = list(self.nlp.tokenizer.pipe(self.following_negations))
         self.matcher.add("Following", self.following_patterns)
 
         self.termination_patterns = list(self.nlp.tokenizer.pipe(self.termination))
@@ -207,9 +203,7 @@ class Negex:
         return boundaries
 
     @staticmethod
-    def yield_spans_within_boundary(
-        doc: Doc, boundary: tuple[int, int], span_keys: set[str]
-    ):
+    def yield_spans_within_boundary(doc: Doc, boundary: tuple[int, int], span_keys: set[str]):
         """
         Yield spans that start and end within a boundary
         """
@@ -259,7 +253,7 @@ class Negex:
                 for span in self.yield_spans_within_boundary(doc, boundary, self.span_keys):
                     self._apply_negation(span, sub_preceding, sub_following)
             else:
-                for e in doc[boundary[0]: boundary[1]].ents:
+                for e in doc[boundary[0] : boundary[1]].ents:
                     self._apply_negation(e, sub_preceding, sub_following)
         return doc
 
