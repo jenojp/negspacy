@@ -1,6 +1,8 @@
+import pytest
 from spacy.language import Language
 
 import negspacy.negation  # noqa: F401
+from negspacy.negation import Negex
 from negspacy.termsets import termset
 
 
@@ -74,9 +76,86 @@ def test_own_terminology(nlp):
     assert not doc.ents[1]._.negex
 
 
-def test_issue7(nlp):
+def test_no_entities(nlp):
+    """Negex does not crash when the doc contains no recognized entities."""
     nlp.add_pipe("negex", last=True)
-    nlp("fgfgdghgdh")
+    doc = nlp("fgfgdghgdh")
+    assert len(doc.ents) == 0
+
+
+def test_ent_types(nlp):
+    """Only entities whose label is in ent_types are negated; others are skipped."""
+    nlp.add_pipe("negex", config={"ent_types": ["PERSON"]}, last=True)
+
+    # GPE entities inside a negation scope must NOT be negated when filter is active
+    doc = nlp("No history of USA, Germany, Italy, Canada, or Brazil")
+    for ent in doc.ents:
+        assert not ent._.negex, f"{ent.text} ({ent.label_}) should not be negated"
+
+    # PERSON entity inside a negation scope must be negated
+    doc2 = nlp("She does not like Steve Jobs.")
+    person_ents = [e for e in doc2.ents if e.label_ == "PERSON"]
+    assert len(person_ents) > 0, "expected at least one PERSON entity"
+    assert any(e._.negex for e in person_ents)
+
+
+def test_chunk_prefix(nlp):
+    """Entities whose text starts with a chunk_prefix value are marked negated."""
+    ruler = nlp.add_pipe("entity_ruler", last=True)
+    ruler.add_patterns([{"label": "SYMPTOM", "pattern": "no headache"}])
+    nlp.add_pipe("negex", config={"chunk_prefix": ["no"]}, last=True)
+    doc = nlp("There is no headache.")
+    symptoms = [e for e in doc.ents if e.label_ == "SYMPTOM"]
+    assert len(symptoms) == 1
+    assert symptoms[0]._.negex
+
+
+def test_extension_name(nlp):
+    """Two Negex instances with different extension_name values work in parallel."""
+    nlp.add_pipe("negex", name="negex_default", last=True)
+    nlp.add_pipe(
+        "negex",
+        name="negex_custom",
+        config={"extension_name": "custom_negex"},
+        last=True,
+    )
+    doc = nlp("She does not like Steve Jobs.")
+    steve = next(e for e in doc.ents if "Jobs" in e.text)
+    assert steve._.negex
+    assert steve._.custom_negex
+
+
+def test_invalid_neg_termset(nlp):
+    """Passing a neg_termset with unexpected keys raises KeyError."""
+    with pytest.raises(KeyError):
+        Negex(
+            nlp,
+            name="negex",
+            neg_termset={
+                "bad_key": [],
+                "preceding_negations": [],
+                "following_negations": [],
+                "termination": [],
+            },
+        )
+
+
+def test_spans_missing_key(nlp):
+    """A span_key absent from doc.spans is silently ignored — no crash."""
+    nlp.add_pipe("negex", config={"span_keys": ["nonexistent"]}, last=True)
+    doc = nlp("She does not like Steve Jobs.")
+    # span_keys mode skips doc.ents; no crash despite the missing key
+    assert all(not e._.negex for e in doc.ents)
+
+
+def test_termination_boundaries(nlp):
+    """'but' creates a termination boundary, splitting negation scope."""
+    nlp.add_pipe("negex", last=True)
+    negex_pipe = nlp.get_pipe("negex")
+    doc = nlp("She does not like Steve Jobs but likes Apple products.")
+    _, _, terminating = negex_pipe.process_negations(doc)
+    boundaries = negex_pipe.termination_boundaries(doc, terminating)
+    assert len(boundaries) >= 2
 
 
 def ents_to_spans(doc):
