@@ -255,3 +255,6 @@ Do not publish to PyPI from a local machine. Do not commit API tokens.
 - For private or experimental context, use `CLAUDE.local.md` (gitignored).
 - When running on Claude Code on the web, the VM setup commands should install dev dependencies and download `en_core_web_sm` before starting work.
 - Always read `MODERNIZATION_PLAN.md` (once created) at the start of any modernization task to understand the current PR sequence and status.
+
+## Modernization
+During the modernization effort, the repo is in transition. The layout and packaging described above are the target state, not the current state. The current repo still has setup.py, setup.cfg, requirements.txt, and azure-pipelines.yml. PRs will progressively move it to the target. Until the packaging-modernization PR lands, dev dependencies must be installed explicitly rather than via pip install -e ".[dev]".
