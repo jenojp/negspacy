@@ -98,7 +98,8 @@ LANGUAGES["en"] = en
 
 # en_clinical builds upon en
 en_clinical = dict()
-pseudo_clinical = pseudo + [
+pseudo_clinical = [
+    *pseudo,
     "gram negative",
     "not rule out",
     "not ruled out",
@@ -110,7 +111,8 @@ pseudo_clinical = pseudo + [
 ]
 en_clinical["pseudo_negations"] = pseudo_clinical
 
-preceding_clinical = preceding + [
+preceding_clinical = [
+    *preceding,
     "patient was not",
     "without indication of",
     "without sign of",
@@ -141,10 +143,11 @@ preceding_clinical = preceding + [
 ]
 en_clinical["preceding_negations"] = preceding_clinical
 
-following_clinical = following + ["was ruled out", "were ruled out", "free"]
+following_clinical = [*following, "was ruled out", "were ruled out", "free"]
 en_clinical["following_negations"] = following_clinical
 
-termination_clinical = termination + [
+termination_clinical = [
+    *termination,
     "cause for",
     "cause of",
     "causes for",
@@ -172,7 +175,8 @@ LANGUAGES["en_clinical"] = en_clinical
 
 en_clinical_sensitive = dict()
 
-preceding_clinical_sensitive = preceding_clinical + [
+preceding_clinical_sensitive = [
+    *preceding_clinical,
     "concern for",
     "supposed",
     "which causes",

@@ -1,15 +1,17 @@
-from spacy.language import Language
-from spacy.tokens import Span
-from spacy.matcher import PhraseMatcher
 import logging
-from typing import List, Dict, Tuple, Set, Optional, Any
+
+from spacy.language import Language
+from spacy.matcher import PhraseMatcher
+from spacy.tokens import Doc, Span
 
 from negspacy.termsets import termset
 
 default_ts = termset("en_clinical").get_patterns()
 
+_MatchTuple = tuple[int, int, int]
 
-def _safe_get_spans(doc, span_key):
+
+def _safe_get_spans(doc: Doc, span_key: str):
     """Safely get spans from doc.spans, return empty list if key not present."""
     return doc.spans.get(span_key, [])
 
@@ -41,7 +43,8 @@ class Negex:
     termset_lang: str
         language code, if using default termsets (e.g. "en" for english)
     extension_name: str
-        defaults to "negex"; whether entity is negated is then available as ent._.negex or span._.negex
+        defaults to "negex"; whether entity is negated is then available
+        as ent._.negex or span._.negex
     pseudo_negations: list
         list of phrases that cancel out a negation, if empty, defaults are used
     preceding_negations: list
@@ -49,7 +52,8 @@ class Negex:
     following_negations: list
         negations that appear after an entity, if empty, defaults are used
     termination: list
-        phrases that "terminate" a sentence for processing purposes such as "but". If empty, defaults are used
+        phrases that "terminate" a sentence for processing purposes such as
+        "but". If empty, defaults are used
     span_keys: list
         list of keys to use for spans, defaults to ["sc"]
 
@@ -59,11 +63,11 @@ class Negex:
         self,
         nlp: Language,
         name: str,
-        neg_termset: Dict[str, List[str]],
-        ent_types: Optional[List[str]] = None,
+        neg_termset: dict[str, list[str]],
+        ent_types: list[str] | None = None,
         extension_name: str = "negex",
-        chunk_prefix: Optional[List[str]] = None,
-        span_keys: Optional[List[str]] = None,
+        chunk_prefix: list[str] | None = None,
+        span_keys: list[str] | None = None,
     ):
         if not Span.has_extension(extension_name):
             Span.set_extension(extension_name, default=False, force=True)
@@ -77,20 +81,21 @@ class Negex:
         ]
         if set(ts.keys()) != set(expected_keys):
             raise KeyError(
-                f"Unexpected or missing keys in 'neg_termset', expected: {expected_keys}, instead got: {list(ts.keys())}"
+                f"Unexpected or missing keys in 'neg_termset', "
+                f"expected: {expected_keys}, instead got: {list(ts.keys())}"
             )
 
-        self.pseudo_negations: List[str] = ts["pseudo_negations"]
-        self.preceding_negations: List[str] = ts["preceding_negations"]
-        self.following_negations: List[str] = ts["following_negations"]
-        self.termination: List[str] = ts["termination"]
+        self.pseudo_negations: list[str] = ts["pseudo_negations"]
+        self.preceding_negations: list[str] = ts["preceding_negations"]
+        self.following_negations: list[str] = ts["following_negations"]
+        self.termination: list[str] = ts["termination"]
 
         self.nlp = nlp
-        self.ent_types: Set[str] = set(ent_types) if ent_types else set()
+        self.ent_types: set[str] = set(ent_types) if ent_types else set()
         self.extension_name = extension_name
         self.build_patterns()
-        self.chunk_prefix: Set[str] = set(chunk_prefix) if chunk_prefix else set()
-        self.span_keys: Set[str] = set(span_keys) if span_keys else set()
+        self.chunk_prefix: set[str] = set(chunk_prefix) if chunk_prefix else set()
+        self.span_keys: set[str] = set(span_keys) if span_keys else set()
 
     def build_patterns(self) -> None:
         """
@@ -100,22 +105,20 @@ class Negex:
         self.matcher = PhraseMatcher(self.nlp.vocab, attr="LOWER")
 
         self.pseudo_patterns = list(self.nlp.tokenizer.pipe(self.pseudo_negations))
-        self.matcher.add("pseudo", None, *self.pseudo_patterns)
+        self.matcher.add("pseudo", self.pseudo_patterns)
 
-        self.preceding_patterns = list(
-            self.nlp.tokenizer.pipe(self.preceding_negations)
-        )
-        self.matcher.add("Preceding", None, *self.preceding_patterns)
+        self.preceding_patterns = list(self.nlp.tokenizer.pipe(self.preceding_negations))
+        self.matcher.add("Preceding", self.preceding_patterns)
 
-        self.following_patterns = list(
-            self.nlp.tokenizer.pipe(self.following_negations)
-        )
-        self.matcher.add("Following", None, *self.following_patterns)
+        self.following_patterns = list(self.nlp.tokenizer.pipe(self.following_negations))
+        self.matcher.add("Following", self.following_patterns)
 
         self.termination_patterns = list(self.nlp.tokenizer.pipe(self.termination))
-        self.matcher.add("Termination", None, *self.termination_patterns)
+        self.matcher.add("Termination", self.termination_patterns)
 
-    def process_negations(self, doc) -> Tuple[List[Tuple[int, int, int]], List[Tuple[int, int, int]], List[Tuple[int, int, int]]]:
+    def process_negations(
+        self, doc: Doc
+    ) -> tuple[list[_MatchTuple], list[_MatchTuple], list[_MatchTuple]]:
         """
         Find negations in doc and clean candidate negations to remove pseudo negations
 
@@ -168,7 +171,9 @@ class Negex:
                     )
         return preceding, following, terminating
 
-    def termination_boundaries(self, doc, terminating: List[Tuple[int, int, int]]) -> List[Tuple[int, int]]:
+    def termination_boundaries(
+        self, doc: Doc, terminating: list[_MatchTuple]
+    ) -> list[tuple[int, int]]:
         """
         Create sub sentences based on terminations found in text.
 
@@ -198,7 +203,7 @@ class Negex:
         return boundaries
 
     @staticmethod
-    def yield_spans_within_boundary(doc, boundary: Tuple[int, int], span_keys: Set[str]):
+    def yield_spans_within_boundary(doc: Doc, boundary: tuple[int, int], span_keys: set[str]):
         """
         Yield spans that start and end within a boundary
         """
@@ -208,7 +213,27 @@ class Negex:
                 if start <= span.start < end and start < span.end <= end:
                     yield span
 
-    def negex(self, doc) -> Any:
+    def _apply_negation(
+        self,
+        span: Span,
+        sub_preceding: list[_MatchTuple],
+        sub_following: list[_MatchTuple],
+    ) -> None:
+        """Apply negation logic to a single span in-place."""
+        if self.ent_types and span.label_ not in self.ent_types:
+            return
+        if any(pre < span.start for pre in [i[1] for i in sub_preceding]):
+            span._.set(self.extension_name, True)
+            return
+        if any(fol > span.end for fol in [i[2] for i in sub_following]):
+            span._.set(self.extension_name, True)
+            return
+        if self.chunk_prefix and any(
+            span.text.lower().startswith(c.lower()) for c in self.chunk_prefix
+        ):
+            span._.set(self.extension_name, True)
+
+    def negex(self, doc: Doc) -> Doc:
         """
         Negates entities of interest
 
@@ -224,31 +249,13 @@ class Negex:
             sub_preceding = [i for i in preceding if boundary[0] <= i[1] < boundary[1]]
             sub_following = [i for i in following if boundary[0] <= i[1] < boundary[1]]
 
-            def process_span(span):
-                if self.ent_types:
-                    if span.label_ not in self.ent_types:
-                        return
-                if any(pre < span.start for pre in [i[1] for i in sub_preceding]):
-                    span._.set(self.extension_name, True)
-                    return
-                if any(fol > span.end for fol in [i[2] for i in sub_following]):
-                    span._.set(self.extension_name, True)
-                    return
-                if self.chunk_prefix:
-                    if any(
-                        span.text.lower().startswith(c.lower())
-                        for c in self.chunk_prefix
-                    ):
-                        span._.set(self.extension_name, True)
-                return span
-
             if self.span_keys:
                 for span in self.yield_spans_within_boundary(doc, boundary, self.span_keys):
-                    process_span(span)
+                    self._apply_negation(span, sub_preceding, sub_following)
             else:
-                for e in doc[boundary[0]: boundary[1]].ents:
-                    process_span(e)
+                for e in doc[boundary[0] : boundary[1]].ents:
+                    self._apply_negation(e, sub_preceding, sub_following)
         return doc
 
-    def __call__(self, doc) -> Any:
+    def __call__(self, doc: Doc) -> Doc:
         return self.negex(doc)
